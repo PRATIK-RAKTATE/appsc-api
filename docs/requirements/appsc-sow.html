@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>APPSC Prep — Statement of Work</title>
+  <style>
+    :root {
+      --ink: #182230;
+      --muted: #667085;
+      --line: #d0d5dd;
+      --paper: #fff;
+      --accent: #c72018
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: #fff;
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.48
+    }
+
+    .document {
+      width: min(1100px, 100%);
+      margin: 0 auto;
+      background: var(--paper)
+    }
+
+    .page {
+      width: 100%;
+      background: var(--paper);
+      padding: 48px 60px;
+      margin: 0;
+      position: relative
+    }
+
+    .page+.page {
+      border-top: 1px solid var(--line)
+    }
+
+    .hero-section {
+      padding-top: 56px
+    }
+
+    .top-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 7px;
+      background: var(--accent)
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18mm
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      display: grid;
+      place-items: center;
+      font-weight: 800
+    }
+
+    .brand strong {
+      font-size: 20px
+    }
+
+    .brand span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px
+    }
+
+    .doc-label {
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px
+    }
+
+    h1 {
+      font-size: 42px;
+      line-height: 1.05;
+      margin: 8px 0 12px
+    }
+
+    .subtitle {
+      font-size: 21px;
+      color: var(--muted);
+      margin-bottom: 24mm
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line)
+    }
+
+    .meta {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .meta:nth-child(odd) {
+      padding-right: 18px;
+      border-right: 1px solid var(--line)
+    }
+
+    .meta:nth-child(even) {
+      padding-left: 18px
+    }
+
+    .meta:nth-last-child(-n+2) {
+      border-bottom: 0
+    }
+
+    .meta small {
+      display: block;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .8px
+    }
+
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+      font-size: 23px
+    }
+
+    .sec {
+      min-width: 34px;
+      height: 34px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      font-weight: 800
+    }
+
+    h3 {
+      margin: 18px 0 7px;
+      font-size: 16px
+    }
+
+    p {
+      margin: 0 0 10px
+    }
+
+    ul,
+    ol {
+      margin: 6px 0 12px;
+      padding-left: 20px
+    }
+
+    li {
+      margin: 4px 0
+    }
+
+    .workflow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 7px;
+      margin: 14px 0
+    }
+
+    .step {
+      border: 1px solid var(--line);
+      border-top: 3px solid var(--accent);
+      padding: 10px 8px;
+      text-align: center;
+      font-size: 12px
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 4px
+    }
+
+    .highlight {
+      border-left: 4px solid var(--accent);
+      background: #fff7f6;
+      padding: 12px 14px;
+      margin: 12px 0
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      padding: 12px;
+      break-inside: avoid
+    }
+
+    .card h3 {
+      margin-top: 0
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 14px;
+      font-size: 12px
+    }
+
+    th,
+    td {
+      border: 1px solid var(--line);
+      padding: 8px;
+      text-align: left;
+      vertical-align: top
+    }
+
+    th {
+      background: #fff4f3;
+      text-transform: uppercase;
+      font-size: 10px;
+      letter-spacing: .4px
+    }
+
+    .signature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 12px
+    }
+
+    .signature-box {
+      border: 1px solid var(--line);
+      padding: 14px;
+      min-height: 155px
+    }
+
+    .small {
+      font-size: 12px
+    }
+
+    .compact li {
+      margin: 2px 0
+    }
+
+    @page {
+      size: A4;
+      margin: 14mm
+    }
+
+    @media print {
+      body {
+        background: #fff
+      }
+
+      .document {
+        margin: 0;
+        width: auto
+      }
+
+      .page {
+        padding: 0 0 18px;
+        break-after: auto;
+        border-top: 0
+      }
+
+      .page+.page {
+        border-top: 0;
+        padding-top: 18px
+      }
+
+      .card,
+      table,
+      .signature-box,
+      .highlight {
+        break-inside: avoid
+      }
+    }
+
+    @media(max-width:900px) {
+
+      .document,
+      .page {
+        width: 100%
+      }
+
+      .page {
+        padding: 28px 20px
+      }
+
+      .workflow {
+        grid-template-columns: 1fr
+      }
+
+      .grid-2,
+      .signature-grid,
+      .meta-grid {
+        grid-template-columns: 1fr
+      }
+
+      .meta:nth-child(odd),
+      .meta:nth-child(even) {
+        padding: 10px 0;
+        border-right: 0
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="document">
+
+    <section class="page hero-section">
+      <div class="top-line"></div>
+      <div class="brand">
+        <div class="brand-mark">SOW</div>
+        <div><strong>Project Statement of Work</strong><span>Technical Scope & Architecture</span></div>
+      </div>
+      <div class="doc-label">Statement of Work</div>
+      <h1>APPSC Prep</h1>
+      <div class="subtitle">Student preparation, bilingual study, testing, mentoring, and AI-powered learning platform
+      </div>
+      <div class="meta-grid">
+        <div class="meta"><small>Document Type</small><strong>Technical Statement of Work</strong></div>
+        <div class="meta"><small>Prepared By</small><strong>Development Team</strong></div>
+        <div class="meta"><small>Version</small><strong>v0.9.0</strong></div>
+        <div class="meta"><small>Date</small><strong>6 August 2026</strong></div>
+        <div class="meta"><small>Platforms</small><strong>Responsive web application and Android application</strong>
+        </div>
+        <div class="meta"><small>Status</small><strong>Scope Draft</strong></div>
+      </div>
+      <br><br><br><br><br><br><br>
+      <div style="margin-top:22mm">
+        <h2><span class="sec">1</span>Project Overview</h2>
+        <p>APPSC Prep will be a student preparation and study-tracking platform for APPSC examination preparation. It
+          will provide a responsive web application and an Android application for students and administrators.</p>
+        <p>The platform will combine bilingual e-book reading, online tests, performance analysis, mentor communication,
+          courses, study materials, current affairs, and an AI assistant that can answer using approved learning content
+          and enabled web sources.</p>
+        <h3>Student Learning Workflow</h3>
+        <div class="workflow">
+          <div class="step"><strong>Study</strong>Read English and Telugu content</div>
+          <div class="step"><strong>Practice</strong>Take tests and quizzes</div>
+          <div class="step"><strong>Analyze</strong>Review time and topic performance</div>
+          <div class="step"><strong>Improve</strong>Use mentors and AI guidance</div>
+          <div class="step"><strong>Progress</strong>Track courses and weak topics</div>
+        </div>
+        <div class="highlight"><strong>Core access rule:</strong> Students will use one active session at a time. Access
+          to purchased courses and materials will be available on both web and Android according to the applicable
+          validity period.</div>
+      </div>
+    </section>
+    <br><br><br><br><br><br><br><br>
+    <section class="page">
+      <h2><span class="sec">2</span>What the System Will Include</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Student Application</h3>
+          <ul class="compact">
+            <li>Email-based student login</li>
+            <li>Home dashboard and learning progress</li>
+            <li>Books, courses, materials, tests, current affairs, and AI access</li>
+            <li>Course enrolment after Razorpay payment</li>
+            <li>Validity-based access control</li>
+            <li>One active session per student</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Admin Application</h3>
+          <ul class="compact">
+            <li>Admin login with role-based permissions</li>
+            <li>Manage students, mentors, books, materials, courses, tests, and current affairs</li>
+            <li>Approve and manage mentor accounts</li>
+            <li>Upload, update, approve, and remove content</li>
+            <li>View audit logs and manage platform settings</li>
+            <li>Backup and restore support</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Bilingual E-Book Reading</h3>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Content and Conversion</h3>
+          <ul class="compact">
+            <li>English books to be provided with confirmed legal rights for digitization and display.</li>
+            <li>Books may be supplied as scanned content or other source material.</li>
+            <li>The technical digitization and content-processing workflow will be handled by the development team.</li>
+            <li>Telugu content will be generated using an automatic translation workflow and can be reviewed or updated
+              by the admin.</li>
+            <li>English and Telugu will be displayed side-by-side for the same page or reading position.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Reader Features</h3>
+          <ul class="compact">
+            <li>Search within books and content</li>
+            <li>Bookmarks and reading progress</li>
+            <li>Highlights and personal notes</li>
+            <li>Font and reading-theme controls</li>
+            <li>Text-to-speech where technically supported</li>
+            <li>Download/offline reading only if separately approved for the selected content and security model</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Online Tests and Performance Analysis</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Area</th>
+            <th>Included Scope</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Test types</td>
+            <td>Mock tests, sectional tests, previous-year papers, daily quizzes, and scheduled tests. The final
+              combination can be configured as required.</td>
+          </tr>
+          <tr>
+            <td>Question management</td>
+            <td>Admin-controlled question bank with subjects, topics, answers, explanations, schedules, and configurable
+              test rules.</td>
+          </tr>
+          <tr>
+            <td>Configurable rules</td>
+            <td>Negative marking, randomization, pause/resume, time limits, ranks, and leaderboards can be configured as
+              per the approved requirement.</td>
+          </tr>
+          <tr>
+            <td>Analytics</td>
+            <td>Score, time per question, accuracy, attempted/unattempted questions, topic-wise weakness, and
+              recommendations.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="highlight"><strong>Content responsibility:</strong> The question bank,
+        explanations, subjects, topics, answers, test schedules, course content, and current-affairs content will be provided and managed by administrator
+        users for ongoing content entry and updates.</div>
+    </section>
+    <br><br><br><br><br><br><br><br><br><br><br>
+
+    <section class="page">
+      <h2><span class="sec">3</span>Mentoring, AI, Courses, and Current Affairs</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Mentor Chat</h3>
+          <ul class="compact">
+            <li>One-to-one student-to-mentor chat</li>
+            <li>Topic-specific conversations</li>
+            <li>Text, file, image, voice-message, and link sharing</li>
+            <li>Chat history, moderation, and reporting</li>
+            <li>Mentor approval and assignment controlled by Admin</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Smart AI Assistant</h3>
+          <ul class="compact">
+            <li>Answers based on approved books and study materials using RAG.</li>
+            <li>May use enabled web search and model capabilities for current or external information.</li>
+            <li>Source citations and book/page references in answers where available.</li>
+            <li>Admin-controlled content indexing and update workflow.</li>
+            <li>AI behavior and enabled sources remain subject to the selected model and service configuration.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Current Affairs and News</h3>
+          <ul class="compact">
+            <li>Admin-controlled current-affairs upload page.</li>
+            <li>Admin will upload news, papers, and related content through the admin panel.</li>
+            <li>RAG processing will make approved content available to the AI assistant.</li>
+            <li>Enabled web search may be used for relevant current information.</li>
+            <li>The system can identify and show relationships between new content and older content, subject to the
+              approved matching behavior.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Courses and Materials</h3>
+          <ul class="compact">
+            <li>Course and material catalogue available on web and Android.</li>
+            <li>One-time purchase through Razorpay.</li>
+            <li>Validity-based access expiry.</li>
+            <li>Invoices, payment history, refunds, coupons, and access controls.</li>
+            <li>Video courses are included; live streaming classes are excluded.</li>
+            <li>Admin controls course and material publishing.</li>
+          </ul>
+        </div>
+      </div>
+      <h3>Content Uploads</h3>
+      <p>Admin content tools will support PDF, scanned images, video, audio, and document uploads, subject to file-size,
+        storage, security, and third-party service limits.</p>
+    </section>
+
+    <section class="page">
+      <h2><span class="sec">4</span>Security, Roles, and Responsibilities</h2>
+      <h3>User Roles</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Role</th>
+            <th>Primary Responsibility</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Student</td>
+            <td>Read content, enrol in courses, take tests, view analytics, chat with approved mentors, and use the AI
+              assistant.</td>
+          </tr>
+          <tr>
+            <td>Admin</td>
+            <td>Manage students, mentors, content, books, tests, courses, payments, current affairs, permissions,
+              moderation, audit logs, and platform settings.</td>
+          </tr>
+          <tr>
+            <td>Mentor</td>
+            <td>Mentor access is subject to Admin approval. Mentor permissions and account workflow will be finalized in
+              the detailed requirement.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="small">A user cannot hold multiple roles. Role-based access will restrict each account to its permitted
+        functions.</p>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Application Security</h3>
+          <ul class="compact">
+            <li>Email login and secure authentication</li>
+            <li>One active session at a time</li>
+            <li>Role-based permissions</li>
+            <li>Admin audit logs</li>
+            <li>Backup and restore support</li>
+            <li>Protection against unauthorized access and content actions</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Content Protection</h3>
+          <ul class="compact">
+            <li>Android screenshot and screen-recording restrictions where supported by the operating system.</li>
+            <li>Web security controls and best-effort browser restrictions.</li>
+            <!-- <li> -->
+            <!-- <Web browsers cannot guarantee complete prevention of screenshots or recording./li> -->
+            <li>Video and book access controlled by authentication and entitlement.</li>
+          </ul>
+        </div>
+      </div>
+      <h3>Responsibilities</h3>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Development Scope</h3>
+          <ul class="compact">
+            <li>Design and develop the web and Android applications</li>
+            <li>Build student, admin, mentor, content, test, payment, AI, and analytics features</li>
+            <li>Implement security, role permissions, audit logging, and one-session control</li>
+            <li>Configure the technical RAG and content-processing workflows</li>
+            <li>Test and provide production-ready application builds</li>
+            <li>Provide basic handover documentation</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Content & Operational Scope</h3>
+          <ul class="compact">
+            <li>Provide English books and confirm digitization rights</li>
+            <li>Provide tests, courses, materials, current affairs, and other learning content</li>
+            <li>Perform content entry, proofreading, approval, and ongoing updates through Admin</li>
+            <li>Provide timely feedback, approvals, and test users/data</li>
+            <li>Provide required third-party accounts and service decisions</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="page">
+      <h2><span class="sec">5</span>Deliverables, Timeline, Acceptance, and Exclusions</h2>
+      <h3>Main Deliverables</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Deliverable</th>
+            <th>Included</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Responsive web application</td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td>Android application</td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td>Student and Admin modules</td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td>Bilingual e-book reader</td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td>Tests and performance analytics</td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td>Mentor chat</td>
+            <td>Yes, one-to-one</td>
+          </tr>
+          <tr>
+            <td>AI/RAG and current-affairs workflows</td>
+            <td>Yes, subject to selected model and service configuration</td>
+          </tr>
+          <tr>
+            <td>Courses, Razorpay payment, and validity access</td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td>Video courses</td>
+            <td>Yes; live streaming excluded</td>
+          </tr>
+          <tr>
+            <td>Production deployment and Play Store publishing</td>
+            <td>Excluded from development price; charged separately</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="highlight"><strong>Expected timeline:</strong> 3 to 5 weeks after approval, applicable advance
+        payment, final requirement confirmation, receipt of initial content, and access to required technical accounts
+        and services.</div>
+      <h3>Acceptance Criteria</h3>
+      <ol class="compact small">
+        <li>Web and Android applications support approved student and admin workflows.</li>
+        <li>Students can log in with email and only one active session is allowed.</li>
+        <li>Books can be viewed with English and Telugu side-by-side according to approved content.</li>
+        <li>Reader features, tests, analytics, weak-topic reporting, and recommendations work as approved.</li>
+        <li>Students can chat one-to-one with approved mentors and use supported attachments.</li>
+        <li>Admin can manage content, tests, courses, current affairs, users, and mentor approval.</li>
+        <li>Razorpay payment, validity-based access, invoices, refunds, coupons, and payment history work according to
+          the approved flow.</li>
+        <li>AI can use approved indexed content and show available source references/citations.</li>
+        <li>Security, role restrictions, audit logs, backups, and one-session control are implemented as agreed.</li>
+        <li>Critical in-scope UAT issues are fixed in one correction cycle.</li>
+      </ol>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Not Included</h3>
+          <ul class="compact small">
+            <li>Hosting, domain, SSL, storage, model/API, payment gateway, messaging, and other third-party charges</li>
+            <li>Play Store account, publishing, and deployment charges</li>
+            <li>Live classes or live streaming</li>
+            <!-- <li>SMS, WhatsApp, social login, and unapproved third-party integrations</li> -->
+            <li>Content creation, proofreading, translation approval, or legal rights clearance</li>
+            <li>Features added after approval without a change request</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Change Request and Support</h3>
+          <p class="small">Any new feature, report, workflow, integration, content format, test rule, role, or output
+            outside this document will be treated as a change request.</p>
+          <p class="small">The development team will confirm additional cost and timeline before starting such work. Commercial terms,
+            taxes, payment schedule, warranty, and support conditions will follow the approved quotation and Terms &amp;
+            Conditions.</p>
+        </div>
+      </div>
+      <br><br><br><br><br><br><br><br><br><br><br><br><br>
+      <h3>Approval</h3>
+      <ul class="compact small">
+        <li>The scope, features, assumptions, deliverables, timeline, and exclusions in this Statement of Work.</li>
+        <li>Content provisioning, legal rights, approvals, and ongoing Admin updates.</li>
+        <li>Separate charges for hosting, third-party services, and deployment/Play Store publishing.</li>
+        <li>Any later changes will follow the change-request process.</li>
+      </ul>
+      <div class="signature-grid">
+        <div class="signature-box"><strong>Authorized Representative</strong>
+          <p class="small">Name:</p>
+          <p class="small">Designation:</p>
+          <p class="small">Signature / Date:</p>
+          <p class="small">Signature / Seal:</p>
+        </div>
+        <div class="signature-box"><strong>Development Team Lead</strong>
+          <p class="small">Name:</p>
+          <p class="small">Designation:</p>
+          <p class="small">Signature / Date:</p>
+          <p class="small">Signature / Seal:</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+
+</html>
