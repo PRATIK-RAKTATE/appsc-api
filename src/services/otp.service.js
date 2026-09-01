@@ -1,14 +1,12 @@
 import bcrypt from "bcryptjs";
 import { OTP } from "../models/otp.model.js";
+import crypto from "crypto";
 
 const OTP_EXPIRY_MINUTES = 10;
-const OTP_LENGTH = 6;
 
 export const generateOTP = () => {
-  const min = 10 ** (OTP_LENGTH - 1);
-  const max = 10 ** OTP_LENGTH - 1;
 
-  return Math.floor(min + Math.random() * (max - min + 1)).toString();
+ return crypto.randomInt(100000, 1000000).toString();
 };
 
 export const createOTP = async (email) => {
