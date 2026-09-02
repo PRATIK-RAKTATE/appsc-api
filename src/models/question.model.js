@@ -1,13 +1,14 @@
 import mongoose, { Schema } from "mongoose";
 
-
-const bilingualSchema = new schema(
+// reuseble bilingual structure 
+const bilingualSchema = new Schema(
     {
        en: {
         type: String,
         required: true,
         trim: true
        },
+
        te: {
         type: String,
         required: true,
@@ -17,8 +18,8 @@ const bilingualSchema = new schema(
     { _id: false }
 );
 
-
-const optionSchema = new schema(
+// question option structure 
+const optionSchema = new Schema(
     {
         key: {
             type: String,
@@ -40,25 +41,35 @@ const optionSchema = new schema(
 );
 
 
-
+// question schema 
 const questionSchema = new Schema(
   {
     subjectID: {
       type: Schema.Types.ObjectId,
       ref: "Subject",
+      required: true,
+      index: true,
     },
+
     topicID: {
       type: Schema.Types.ObjectId,
       ref: "Topic",
+      required: true,
+      index: true,
     },
+
     subTopic: {
       type: Schema.Types.ObjectId,
       ref: "SubTopic",
+      required: true,
+      index: true,
     },
+
     question: {
       type: bilingualSchema,
       required: true,
     },
+
     option: {
       type: [optionSchema],
       required: true,
@@ -69,10 +80,11 @@ const questionSchema = new Schema(
         message: "A question must have exactly 4 options",
       },
     },
-    explaination: { 
-        type: bilingualSchema,
-        required: true
-    }
+
+    explaination: {
+      type: bilingualSchema,
+      required: true,
+    },
   },
   { timestamps: true },
 );

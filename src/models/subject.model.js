@@ -17,7 +17,7 @@ const subjectSchema = new Schema(
         },
         isActive: {
             type: Boolean,
-            default: false
+            default: true
         }
 
     },
