@@ -76,7 +76,7 @@ export const createKnowledgeChunks = async (chapterId) => {
 
   const chunks = createSemanticChunks(fullText);
 
-  const knowledgeChunks = [];
+  const operations = [];
 
   for (let index = 0; index < chunks.length; index++) {
     const content = chunks[index];
@@ -85,21 +85,41 @@ export const createKnowledgeChunks = async (chapterId) => {
 
     const tokenCount = content.split(/\s+/).length;
 
-    const knowledgeChunk = await KnowledgeChunk.create({
-      bookId: chapter.bookId,
-      chapterId: chapter._id,
-      blockIds: blocks.map((block) => block._id),
-      content,
-      embedding,
-      chunkIndex: index,
-      tokenCount,
-      metadata: {
-        chapterTitle: chapter.title,
+    operations.push({
+      updateOne: {
+        filter: {
+          bookId: chapter.bookId,
+          chapterId: chapter._id,
+          chunkIndex: index,
+        },
+        update: {
+          $set: {
+            bookId: chapter.bookId,
+            chapterId: chapter._id,
+            blockIds: blocks.map((block) => block._id),
+            content,
+            embedding,
+            chunkIndex: index,
+            tokenCount,
+            metadata: {
+              chapterTitle: chapter.title,
+            },
+          },
+        },
+        upsert: true,
       },
     });
-
-    knowledgeChunks.push(knowledgeChunk);
   }
 
-  return knowledgeChunks;
+  if (!operations.length) {
+    return [];
+  }
+
+  await KnowledgeChunk.bulkWrite(operations);
+
+  return KnowledgeChunk.find({
+    chapterId: chapter._id,
+  }).sort({
+    chunkIndex: 1,
+  });
 };

@@ -3,12 +3,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const {
   mockChapterFindById,
   mockBookBlockFind,
-  mockKnowledgeChunkCreate,
+  mockKnowledgeChunkBulkWrite,
+  mockKnowledgeChunkFind,
   mockGenerateEmbedding,
 } = vi.hoisted(() => ({
   mockChapterFindById: vi.fn(),
   mockBookBlockFind: vi.fn(),
-  mockKnowledgeChunkCreate: vi.fn(),
+  mockKnowledgeChunkBulkWrite: vi.fn(),
+  mockKnowledgeChunkFind: vi.fn(),
   mockGenerateEmbedding: vi.fn(),
 }));
 
@@ -26,7 +28,8 @@ vi.mock("../models/bookBlock.model.js", () => ({
 
 vi.mock("../models/knowledgeChunk.model.js", () => ({
   KnowledgeChunk: {
-    create: mockKnowledgeChunkCreate,
+    bulkWrite: mockKnowledgeChunkBulkWrite,
+    find: mockKnowledgeChunkFind,
   },
 }));
 
@@ -42,6 +45,24 @@ import {
 describe("Knowledge Chunk Service", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+
+    mockKnowledgeChunkBulkWrite.mockResolvedValue({
+      acknowledged: true,
+      upsertedCount: 1,
+      modifiedCount: 0,
+    });
+
+    mockKnowledgeChunkFind.mockReturnValue({
+      sort: vi.fn().mockResolvedValue([
+        {
+          _id: "chunk-1",
+          chunkIndex: 0,
+          content: Array(600).fill("study").join(" "),
+          tokenCount: 600,
+          embedding: Array(1536).fill(0.1),
+        },
+      ]),
+    });
   });
 
   it("should return empty array for empty text", () => {
@@ -62,6 +83,7 @@ describe("Knowledge Chunk Service", () => {
 
     chunks.forEach((chunk) => {
       const tokenCount = chunk.split(/\s+/).length;
+
       expect(tokenCount).toBeLessThanOrEqual(1000);
     });
   });
@@ -73,6 +95,7 @@ describe("Knowledge Chunk Service", () => {
 
     chunks.forEach((chunk) => {
       const tokenCount = chunk.split(/\s+/).length;
+
       expect(tokenCount).toBeGreaterThanOrEqual(500);
     });
   });
@@ -132,9 +155,10 @@ describe("Knowledge Chunk Service", () => {
     const result = await createKnowledgeChunks("chapter-id");
 
     expect(result).toEqual([]);
+    expect(mockKnowledgeChunkBulkWrite).not.toHaveBeenCalled();
   });
 
-  it("should create knowledge chunks with embeddings", async () => {
+  it("should create knowledge chunks with embeddings using bulk upsert", async () => {
     mockChapterFindById.mockResolvedValue({
       _id: "chapter-id",
       bookId: "book-id",
@@ -158,28 +182,46 @@ describe("Knowledge Chunk Service", () => {
 
     mockGenerateEmbedding.mockResolvedValue(embedding);
 
-    mockKnowledgeChunkCreate.mockImplementation(
-      async (data) => data
-    );
-
     const result = await createKnowledgeChunks("chapter-id");
 
     expect(result).toHaveLength(1);
 
     expect(mockGenerateEmbedding).toHaveBeenCalledTimes(1);
 
-    expect(mockKnowledgeChunkCreate).toHaveBeenCalledTimes(1);
+    expect(mockKnowledgeChunkBulkWrite).toHaveBeenCalledTimes(1);
+
+    expect(mockKnowledgeChunkBulkWrite).toHaveBeenCalledWith([
+      {
+        updateOne: {
+          filter: {
+            bookId: "book-id",
+            chapterId: "chapter-id",
+            chunkIndex: 0,
+          },
+          update: {
+            $set: {
+              bookId: "book-id",
+              chapterId: "chapter-id",
+              blockIds: ["block-1"],
+              content: expect.any(String),
+              embedding,
+              chunkIndex: 0,
+              tokenCount: 600,
+              metadata: {
+                chapterTitle: "Test Chapter",
+              },
+            },
+          },
+          upsert: true,
+        },
+      },
+    ]);
 
     expect(result[0]).toMatchObject({
-      bookId: "book-id",
-      chapterId: "chapter-id",
-      content: expect.any(String),
-      embedding,
       chunkIndex: 0,
       tokenCount: 600,
-      metadata: {
-        chapterTitle: "Test Chapter",
-      },
+      embedding,
     });
   });
 });
+
