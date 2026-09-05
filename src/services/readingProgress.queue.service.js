@@ -1,0 +1,43 @@
+import { Queue } from "bullmq";
+import { redisConnection } from "../config/redis.js";
+import { scheduleReadingProgress } from "../queues/readingProgress.queue.js";
+
+
+export const readingProgressQueue = new Queue("reading-progress", {
+  connection: redisConnection,
+});
+
+
+export const scheduleReadingProgress = async ({
+  userId,
+  bookId,
+  chapterId,
+  blockNumber,
+  scrollPosition,
+  language,
+  fontSize,
+  theme,
+}) => {
+  const jobId = `progress-${userId}-${bookId}`;
+  await readingProgressQueue.remove(jobId);
+
+  await readingProgressQueue.add(
+    "save-reading-progress",
+    {
+      userId,
+      bookId,
+      chapterId,
+      blockNumber,
+      scrollPosition,
+      language,
+      fontSize,
+      theme,
+    },
+    {
+      jobId,
+      delay: 1000,
+      removeOnComplete: true,
+      removeOnFail: 100,
+    },
+  );
+};
