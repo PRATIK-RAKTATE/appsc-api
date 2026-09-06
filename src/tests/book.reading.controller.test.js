@@ -1,21 +1,22 @@
-
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const {
-  getBookReader,
-  getReadingProgress,
-  saveReadingProgress,
-} = vi.hoisted(() => ({
+const { getBookReader, getReadingProgress } = vi.hoisted(() => ({
   getBookReader: vi.fn(),
   getReadingProgress: vi.fn(),
-  saveReadingProgress: vi.fn(),
+}));
+
+const { scheduleReadingProgress } = vi.hoisted(() => ({
+  scheduleReadingProgress: vi.fn(),
 }));
 
 vi.mock("../services/book.service.js", () => ({
   createBookBlock: vi.fn(),
   getBookReader,
   getReadingProgress,
-  saveReadingProgress,
+}));
+
+vi.mock("../services/readingProgress.queue.service.js", () => ({
+  scheduleReadingProgress,
 }));
 
 import {
@@ -118,7 +119,7 @@ describe("Book Reading Controllers", () => {
 
       expect(getReadingProgress).toHaveBeenCalledWith(
         req.user.userId,
-        req.params.bookId
+        req.params.bookId,
       );
 
       expect(res.status).toHaveBeenCalledWith(200);
@@ -136,7 +137,7 @@ describe("Book Reading Controllers", () => {
 
       expect(getReadingProgress).toHaveBeenCalledWith(
         req.user.userId,
-        req.params.bookId
+        req.params.bookId,
       );
 
       expect(res.status).toHaveBeenCalledWith(200);
@@ -149,7 +150,7 @@ describe("Book Reading Controllers", () => {
   });
 
   describe("saveReadingProgressController", () => {
-    it("should save reading progress successfully", async () => {
+    it("should schedule reading progress successfully", async () => {
       req.body = {
         chapterId: "chapter123",
         blockNumber: 5,
@@ -159,17 +160,11 @@ describe("Book Reading Controllers", () => {
         theme: "SEPIA",
       };
 
-      const savedProgress = {
-        userId: req.user.userId,
-        bookId: req.params.bookId,
-        ...req.body,
-      };
-
-      saveReadingProgress.mockResolvedValue(savedProgress);
+      scheduleReadingProgress.mockResolvedValue();
 
       await saveReadingProgressController(req, res);
 
-      expect(saveReadingProgress).toHaveBeenCalledWith({
+      expect(scheduleReadingProgress).toHaveBeenCalledWith({
         userId: req.user.userId,
         bookId: req.params.bookId,
         chapterId: "chapter123",
@@ -180,12 +175,11 @@ describe("Book Reading Controllers", () => {
         theme: "SEPIA",
       });
 
-      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.status).toHaveBeenCalledWith(202);
 
       expect(res.json).toHaveBeenCalledWith({
         success: true,
-        message: "Reading progress saved successfully",
-        data: savedProgress,
+        message: "Reading progress update scheduled",
       });
     });
 
@@ -196,14 +190,13 @@ describe("Book Reading Controllers", () => {
 
       await saveReadingProgressController(req, res);
 
-      expect(saveReadingProgress).not.toHaveBeenCalled();
+      expect(scheduleReadingProgress).not.toHaveBeenCalled();
 
       expect(res.status).toHaveBeenCalledWith(400);
 
       expect(res.json).toHaveBeenCalledWith({
         success: false,
-        message:
-          "chapterId, blockNumber and scrollPosition are required",
+        message: "chapterId, blockNumber and scrollPosition are required",
       });
     });
 
@@ -217,31 +210,32 @@ describe("Book Reading Controllers", () => {
         theme: "LIGHT",
       };
 
-      const savedProgress = {
-        userId: req.user.userId,
-        bookId: req.params.bookId,
-        ...req.body,
-      };
-
-      saveReadingProgress.mockResolvedValue(savedProgress);
+      scheduleReadingProgress.mockResolvedValue();
 
       await saveReadingProgressController(req, res);
 
-      expect(saveReadingProgress).toHaveBeenCalled();
+      expect(scheduleReadingProgress).toHaveBeenCalledWith({
+        userId: req.user.userId,
+        bookId: req.params.bookId,
+        chapterId: "chapter123",
+        blockNumber: 1,
+        scrollPosition: 0,
+        language: "ENGLISH",
+        fontSize: 16,
+        theme: "LIGHT",
+      });
 
-      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.status).toHaveBeenCalledWith(202);
     });
 
-    it("should return 500 when saving progress fails", async () => {
+    it("should return 500 when scheduling progress fails", async () => {
       req.body = {
         chapterId: "chapter123",
         blockNumber: 1,
         scrollPosition: 100,
       };
 
-      saveReadingProgress.mockRejectedValue(
-        new Error("Database error")
-      );
+      scheduleReadingProgress.mockRejectedValue(new Error("Queue error"));
 
       await saveReadingProgressController(req, res);
 
@@ -249,9 +243,8 @@ describe("Book Reading Controllers", () => {
 
       expect(res.json).toHaveBeenCalledWith({
         success: false,
-        message: "Failed to save reading progress",
+        message: "Failed to schedule reading progress",
       });
     });
   });
 });
-

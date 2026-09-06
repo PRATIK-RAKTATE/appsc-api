@@ -1,9 +1,7 @@
-import {
-  createBookBlock,
-  getBookReader,
-  getReadingProgress,
-  saveReadingProgress,
-} from "../services/book.service.js";
+import {createBookBlock,getBookReader,getReadingProgress,} from "../services/book.service.js";
+import { scheduleReadingProgress } from "../services/readingProgress.queue.service.js";
+
+
 export const createBookBlockController = async (req, res) => {
   try {
     const { chapterId, blockNumber, englishText } = req.body;
@@ -62,10 +60,7 @@ export const getReadingProgressController = async (req, res) => {
   try {
     const { bookId } = req.params;
 
-    const progress = await getReadingProgress(
-      req.user.userId,
-      bookId
-    );
+    const progress = await getReadingProgress(req.user.userId, bookId);
 
     return res.status(200).json({
       success: true,
@@ -106,7 +101,7 @@ export const saveReadingProgressController = async (req, res) => {
       });
     }
 
-    const progress = await saveReadingProgress({
+    await scheduleReadingProgress({
       userId: req.user.userId,
       bookId,
       chapterId,
@@ -117,17 +112,16 @@ export const saveReadingProgressController = async (req, res) => {
       theme,
     });
 
-    return res.status(200).json({
+    return res.status(202).json({
       success: true,
-      message: "Reading progress saved successfully",
-      data: progress,
+      message: "Reading progress update scheduled",
     });
   } catch (error) {
-    console.error("Save reading progress error:", error);
+    console.error("Schedule reading progress error:", error);
 
     return res.status(500).json({
       success: false,
-      message: "Failed to save reading progress",
+      message: "Failed to schedule reading progress",
     });
   }
 };
