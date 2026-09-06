@@ -73,7 +73,7 @@ describe("Subject controllers", () => {
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
         success: false,
-        message: "subjectNmae adn subjectKey are required",
+        message: "subjectNmae and subjectKey are required",
       });
     });
 
