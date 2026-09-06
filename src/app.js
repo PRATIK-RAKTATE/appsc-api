@@ -3,6 +3,7 @@ import authRoutes from "./routes/auth.routes.js";
 import bookRoutes from "./routes/book.routes.js";
 import subjectRoutes from "./routes/subject.routes.js";
 import topicRoutes from "./routes/topic.routes.js";
+import subTopicRoutes from "./routes/subTopic.routes.js";
 
 const app = express();
 
@@ -20,5 +21,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/books", bookRoutes);
 app.use("/api/subjects", subjectRoutes);
 app.use("/api/topics", topicRoutes);
+app.use("/api/subtopics", subTopicRoutes);
 
 export default app;
