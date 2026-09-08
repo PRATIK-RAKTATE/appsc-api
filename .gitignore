@@ -1,17 +1,20 @@
 # Dependencies
-
 node_modules/
 
 # Environment variables / Secrets
-
 .env
 .env.*
 !.env.example
 env.example
-credentials/google-service-account.json
+
+# Credentials
+credentials/
+*.pem
+*.key
+*.p12
+*.pfx
 
 # Logs
-
 logs/
 *.log
 npm-debug.log*
@@ -19,34 +22,52 @@ yarn-debug.log*
 yarn-error.log*
 
 # Build / Output
-
 dist/
 build/
+out/
 
 # Test Coverage
-
 coverage/
+.nyc_output/
 
 # Temporary files
-
 tmp/
 temp/
+.cache/
+
+# MongoDB backups
+backups/
+tmp/mongodb-backups/
+
+# Uploads / Generated files
+uploads/
+
+# React / Vite / Next cache
+.vite/
+.next/
+
+# React Native / Android
+android/.gradle/
+android/local.properties
+android/.idea/
+android/build/
+android/app/build/
+android/app/release/
+*.apk
+*.aab
 
 # OS files
-
 .DS_Store
 Thumbs.db
+desktop.ini
 
 # VS Code / IDE
-
 .vscode/
 .idea/
 
-# Cache
-
-.cache/
+# TypeScript cache
 *.tsbuildinfo
 
-# Uploads / Generated files
-
-uploads/
+# Swap files
+*.swp
+*.swo
