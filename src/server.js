@@ -1,16 +1,15 @@
 import "./config/env.js";
 import "./workers/knowledgeChunk.worker.js";
-
+import { startMongoDBBackupJob } from "./jobs/mongodbBackup.job.js";
 
 import app from "./app.js";
 import connectDB from "./config/db.js";
 import "./workers/readingProgress.worker.js";
 
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-// dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 const PORT = process.env.PORT || 5000;
+
+startMongoDBBackupJob();
 
 const startServer = async () => {
   try {
