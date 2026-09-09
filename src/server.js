@@ -1,10 +1,11 @@
 import "./config/env.js";
 import "./workers/knowledgeChunk.worker.js";
+import "./workers/readingProgress.worker.js";
+import "./workers/currentAffairsRag.worker.js";
 import { startMongoDBBackupJob } from "./jobs/mongodbBackup.job.js";
 
 import app from "./app.js";
 import connectDB from "./config/db.js";
-import "./workers/readingProgress.worker.js";
 
 
 const PORT = process.env.PORT || 5000;
