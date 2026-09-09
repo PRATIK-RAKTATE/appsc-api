@@ -7,6 +7,7 @@ import subTopicRoutes from "./routes/subTopic.routes.js";
 import questionRoutes from "./routes/question.routes.js";
 import platformSettingRoutes from "./routes/platformSetting.routes.js";
 
+import testRoutes from "./routes/test.routes.js";
 
 const app = express();
 
@@ -29,5 +30,6 @@ app.use("/api/questions", questionRoutes);
 app.use("/admin/settings", platformSettingRoutes);
 
 
+app.use("/api/tests", testRoutes);
 
 export default app;
