@@ -9,6 +9,7 @@ import platformSettingRoutes from "./routes/platformSetting.routes.js";
 
 import testRoutes from "./routes/test.routes.js";
 import currentAffairsRoutes from "./routes/currentAffairs.routes.js";
+import videoRoutes from "./routes/video.routes.js";
 
 const app = express();
 
@@ -32,5 +33,6 @@ app.use("/admin/settings", platformSettingRoutes);
 app.use("/api/current-affairs", currentAffairsRoutes);
 
 app.use("/api/tests", testRoutes);
+app.use("/api/videos", videoRoutes);
 
 export default app;
