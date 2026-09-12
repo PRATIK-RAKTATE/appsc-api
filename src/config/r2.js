@@ -10,3 +10,4 @@ export const r2Client = new S3Client({
 });
 
 export const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME;
+export const R2_SIGNED_URL_EXPIRY_SECONDS = Number(process.env.R2_SIGNED_URL_EXPIRY_SECONDS) || 3600;
