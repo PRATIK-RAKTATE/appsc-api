@@ -107,6 +107,25 @@ const paymentTransactionSchema = new Schema(
       default: false,
     },
 
+    // Amounts are stored in rupees, consistent with Order.amount.
+    refundedAmount: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
+
+    refunds: {
+      type: [
+        {
+          razorpayRefundId: { type: String, required: true, trim: true },
+          amount: { type: Number, required: true, min: 0 },
+          status: { type: String, trim: true },
+          createdAt: { type: Date, default: Date.now },
+        },
+      ],
+      default: () => [],
+    },
+
     errorCode: {
       type: String,
       trim: true,
