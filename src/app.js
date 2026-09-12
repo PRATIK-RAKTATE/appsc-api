@@ -10,6 +10,7 @@ import platformSettingRoutes from "./routes/platformSetting.routes.js";
 import testRoutes from "./routes/test.routes.js";
 import currentAffairsRoutes from "./routes/currentAffairs.routes.js";
 import videoRoutes from "./routes/video.routes.js";
+import paymentRoutes from "./routes/payment.routes.js";
 
 const app = express();
 
@@ -34,5 +35,6 @@ app.use("/api/current-affairs", currentAffairsRoutes);
 
 app.use("/api/tests", testRoutes);
 app.use("/api/videos", videoRoutes);
+app.use("/api/payments", paymentRoutes);
 
 export default app;

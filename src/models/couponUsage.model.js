@@ -22,7 +22,6 @@ const couponUsageSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Order",
       required: true,
-      index: true,
     },
 
     courseId: {
