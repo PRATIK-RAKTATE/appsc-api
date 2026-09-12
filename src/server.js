@@ -6,6 +6,9 @@ import { startMongoDBBackupJob } from "./jobs/mongodbBackup.job.js";
 
 import app from "./app.js";
 import connectDB from "./config/db.js";
+import { createServer } from "http";
+import { Server } from "socket.io";
+import { registerSocketHandlers } from "./services/socket.service.js";
 
 
 const PORT = process.env.PORT || 5000;
@@ -16,7 +19,17 @@ const startServer = async () => {
   try {
     await connectDB();
 
-    app.listen(PORT, () => {
+    const httpServer = createServer(app);
+
+    const io = new Server(httpServer, {
+      cors: {
+        origin: "*",
+      },
+    });
+
+    registerSocketHandlers(io);
+
+    httpServer.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
   } catch (error) {
