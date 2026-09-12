@@ -155,9 +155,6 @@ const paymentTransactionSchema = new Schema(
 
 paymentTransactionSchema.index({ orderId: 1, createdAt: -1 });
 paymentTransactionSchema.index({ userId: 1, createdAt: -1 });
-paymentTransactionSchema.index({ razorpayOrderId: 1 });
-paymentTransactionSchema.index({ status: 1 });
-
 paymentTransactionSchema.virtual("order", {
   ref: "Order",
   localField: "orderId",

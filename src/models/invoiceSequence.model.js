@@ -9,7 +9,6 @@ const invoiceSequenceSchema = new Schema(
       required: true,
       unique: true,
       trim: true,
-      index: true,
     },
 
     prefix: {
@@ -31,8 +30,6 @@ const invoiceSequenceSchema = new Schema(
     timestamps: true,
   }
 );
-
-invoiceSequenceSchema.index({ key: 1 }, { unique: true });
 
 export const InvoiceSequence = model(
   "InvoiceSequence",
