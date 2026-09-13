@@ -2,11 +2,15 @@
 
 node_modules/
 
+
 # Environment variables / Secrets
 
 .env
 .env.*
-!.env.example
+
+credentials/
+credentials/google-service-account.json
+q
 
 # Logs
 
@@ -48,3 +52,4 @@ Thumbs.db
 # Uploads / Generated files
 
 uploads/
+
