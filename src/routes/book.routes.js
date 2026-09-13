@@ -10,12 +10,19 @@ import {
   deleteBookController,
   getUploadJobController,
   getBookUploadJobsController,
+  createBookBlockController,
+  getBookReaderController,
+  getReadingProgressController,
+  saveReadingProgressController,
 } from "../controllers/book.controller.js";
 import { verifyToken, requireRole } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-// Upload job status (placed before /:id to avoid collision)
+// Translation / Book blocks endpoint
+router.post("/book-blocks", createBookBlockController);
+
+// Upload job status (placed before /:id to avoid route conflict)
 router.get(
   "/upload-jobs/:jobId",
   verifyToken,
@@ -66,6 +73,25 @@ router.get(
   verifyToken,
   requireRole("ADMIN"),
   getBookUploadJobsController
+);
+
+// Reading progress and reader endpoints
+router.get(
+  "/:bookId/reader",
+  verifyToken,
+  getBookReaderController
+);
+
+router.get(
+  "/:bookId/progress",
+  verifyToken,
+  getReadingProgressController
+);
+
+router.put(
+  "/:bookId/progress",
+  verifyToken,
+  saveReadingProgressController
 );
 
 // Book CRUD operations

@@ -2,7 +2,9 @@ import mongoose from "mongoose";
 import { Book, BOOK_STATUS } from "../models/book.model.js";
 import { Chapter } from "../models/chapter.model.js";
 import { BookBlock } from "../models/bookBlock.model.js";
+import { ReadingProgress } from "../models/readingProgress.model.js";
 import { UploadJob, UPLOAD_JOB_STATUS } from "../models/uploadJob.model.js";
+import { addTranslationJob } from "./translation.queue.service.js";
 import {
   generatePresignedUploadUrl,
   getFileUrl,
@@ -318,7 +320,6 @@ export const deleteBook = async (bookId) => {
     throw new Error("Book not found");
   }
 
-  // Find all chapters to delete blocks
   const chapters = await Chapter.find({ bookId });
   const chapterIds = chapters.map((c) => c._id);
 
@@ -329,7 +330,6 @@ export const deleteBook = async (bookId) => {
   await Chapter.deleteMany({ bookId });
   await UploadJob.deleteMany({ bookId });
 
-  // If there's an R2 file key, try to clean it up gracefully
   if (book.sourceFile?.fileUrl) {
     try {
       const match = book.sourceFile.fileUrl.match(/books\/[^?]+/);
@@ -374,4 +374,101 @@ export const getUploadJobsByBook = async (bookId) => {
   }
 
   return await UploadJob.find({ bookId }).sort({ createdAt: -1 });
+};
+
+// --- Reading & Translation Pipeline Features ---
+
+export const createBookBlock = async ({
+  chapterId,
+  blockNumber,
+  englishText,
+}) => {
+  const bookBlock = await BookBlock.create({
+    chapterId,
+    blockNumber,
+    englishText,
+  });
+
+  if (typeof addTranslationJob === "function") {
+    try {
+      await addTranslationJob({
+        blockId: bookBlock._id,
+        englishText: bookBlock.englishText,
+      });
+    } catch {
+      // Background worker translation error shouldn't fail block creation
+    }
+  }
+
+  return bookBlock;
+};
+
+export const getBookReader = async (bookId) => {
+  const book = await Book.findById(bookId).lean();
+
+  if (!book) {
+    throw new Error("Book not found");
+  }
+
+  const chapters = await Chapter.find({ bookId })
+    .sort({ chapterNumber: 1 })
+    .lean();
+
+  const chapterIds = chapters.map((chapter) => chapter._id);
+
+  const blocks = await BookBlock.find({
+    chapterId: { $in: chapterIds },
+  })
+    .sort({ chapterId: 1, blockNumber: 1 })
+    .lean();
+
+  return {
+    book,
+    chapters,
+    blocks,
+  };
+};
+
+export const getReadingProgress = async (userId, bookId) => {
+  const progress = await ReadingProgress.findOne({
+    userId,
+    bookId,
+  }).lean();
+
+  return progress;
+};
+
+export const saveReadingProgress = async ({
+  userId,
+  bookId,
+  chapterId,
+  blockNumber,
+  scrollPosition,
+  language,
+  fontSize,
+  theme,
+}) => {
+  const progress = await ReadingProgress.findOneAndUpdate(
+    {
+      userId,
+      bookId,
+    },
+    {
+      $set: {
+        chapterId,
+        blockNumber,
+        scrollPosition,
+        language,
+        fontSize,
+        theme,
+      },
+    },
+    {
+      new: true,
+      upsert: true,
+      runValidators: true,
+    }
+  ).lean();
+
+  return progress;
 };

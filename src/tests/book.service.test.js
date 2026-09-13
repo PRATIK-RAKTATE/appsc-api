@@ -93,6 +93,10 @@ vi.mock("../services/r2.service.js", () => ({
   deleteFileFromR2: deleteFileFromR2Mock,
 }));
 
+vi.mock("../services/translation.queue.service.js", () => ({
+  addTranslationJob: vi.fn(),
+}));
+
 import {
   createBook,
   getPresignedUploadForBook,

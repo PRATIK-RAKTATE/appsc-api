@@ -27,13 +27,10 @@ export const r2Client = new S3Client({
 
 export const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME;
 export const R2_SIGNED_URL_EXPIRY_SECONDS =
-  Number(process.env.R2_SIGNED_URL_EXPIRY_SECONDS) || 900; // 15 minutes default for presigned upload
+  Number(process.env.R2_SIGNED_URL_EXPIRY_SECONDS) || 900;
 
 /**
  * Generate a presigned URL for direct client upload (PUT) to Cloudflare R2.
- * Accepts either an options object or positional arguments:
- * generatePresignedUploadUrl({ key, contentType, expiresIn })
- * generatePresignedUploadUrl(key, contentType, expiresIn)
  */
 export const generatePresignedUploadUrl = async (
   keyOrOptions,

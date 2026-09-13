@@ -1,6 +1,15 @@
 import express from "express";
 import authRoutes from "./routes/auth.routes.js";
 import bookRoutes from "./routes/book.routes.js";
+import subjectRoutes from "./routes/subject.routes.js";
+import topicRoutes from "./routes/topic.routes.js";
+import subTopicRoutes from "./routes/subTopic.routes.js";
+import questionRoutes from "./routes/question.routes.js";
+import platformSettingRoutes from "./routes/platformSetting.routes.js";
+
+import testRoutes from "./routes/test.routes.js";
+import currentAffairsRoutes from "./routes/currentAffairs.routes.js";
+import paymentRoutes from "./routes/payment.routes.js";
 
 const app = express();
 
@@ -16,5 +25,14 @@ app.get("/health", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/books", bookRoutes);
+app.use("/api/subjects", subjectRoutes);
+app.use("/api/topics", topicRoutes);
+app.use("/api/subtopics", subTopicRoutes);
+app.use("/api/questions", questionRoutes);
+app.use("/admin/settings", platformSettingRoutes);
+app.use("/api/current-affairs", currentAffairsRoutes);
+
+app.use("/api/tests", testRoutes);
+app.use("/api/payments", paymentRoutes);
 
 export default app;

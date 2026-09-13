@@ -35,6 +35,14 @@ vi.mock("../services/book.service.js", () => ({
   deleteBook: deleteBookMock,
   getUploadJobById: getUploadJobByIdMock,
   getUploadJobsByBook: getUploadJobsByBookMock,
+  createBookBlock: vi.fn(),
+  getBookReader: vi.fn(),
+  getReadingProgress: vi.fn(),
+  saveReadingProgress: vi.fn(),
+}));
+
+vi.mock("../services/readingProgress.queue.service.js", () => ({
+  scheduleReadingProgress: vi.fn(),
 }));
 
 import {
