@@ -12,6 +12,7 @@ import currentAffairsRoutes from "./routes/currentAffairs.routes.js";
 import videoRoutes from "./routes/video.routes.js";
 import paymentRoutes from "./routes/payment.routes.js";
 import adminCourseRoutes from "./routes/adminCourse.routes.js";
+import adminUserRoutes from "./routes/adminUser.routes.js";
 
 const app = express();
 
@@ -38,5 +39,6 @@ app.use("/api/tests", testRoutes);
 app.use("/api/videos", videoRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/admin/courses", adminCourseRoutes);
+app.use("/api/admin/users", adminUserRoutes);
 
 export default app;

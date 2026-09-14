@@ -1,4 +1,3 @@
-
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import jwt from "jsonwebtoken";
 
@@ -6,6 +5,16 @@ import {
   verifyToken,
   requireRole,
 } from "../middleware/auth.middleware.js";
+
+const { userFindByIdMock } = vi.hoisted(() => ({
+  userFindByIdMock: vi.fn(),
+}));
+
+vi.mock("../models/user.model.js", () => ({
+  User: {
+    findById: userFindByIdMock,
+  },
+}));
 
 describe("Auth Middleware", () => {
   beforeEach(() => {
@@ -15,12 +24,13 @@ describe("Auth Middleware", () => {
   });
 
   describe("verifyToken", () => {
-    it("should allow request with a valid access token", () => {
+    it("should allow request with a valid access token", async () => {
       const token = jwt.sign(
         {
           userId: "123456789",
           email: "test@example.com",
           role: "STUDENT",
+          tokenVersion: 0,
         },
         process.env.JWT_ACCESS_SECRET,
         {
@@ -41,7 +51,16 @@ describe("Auth Middleware", () => {
 
       const next = vi.fn();
 
-      verifyToken(req, res, next);
+      userFindByIdMock.mockResolvedValue({
+        _id: "123456789",
+        email: "test@example.com",
+        role: "STUDENT",
+        status: "ACTIVE",
+        tokenVersion: 0,
+        toObject: () => ({ email: "test@example.com", role: "STUDENT", status: "ACTIVE" }),
+      });
+
+      await verifyToken(req, res, next);
 
       expect(next).toHaveBeenCalledOnce();
       expect(req.user.userId).toBe("123456789");
@@ -50,7 +69,7 @@ describe("Auth Middleware", () => {
       expect(res.status).not.toHaveBeenCalled();
     });
 
-    it("should reject request when access token is missing", () => {
+    it("should reject request when access token is missing", async () => {
       const req = {
         headers: {},
       };
@@ -62,7 +81,7 @@ describe("Auth Middleware", () => {
 
       const next = vi.fn();
 
-      verifyToken(req, res, next);
+      await verifyToken(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(401);
       expect(res.json).toHaveBeenCalledWith({
@@ -71,7 +90,7 @@ describe("Auth Middleware", () => {
       expect(next).not.toHaveBeenCalled();
     });
 
-    it("should reject request with an invalid access token", () => {
+    it("should reject request with an invalid access token", async () => {
       const req = {
         headers: {
           authorization: "Bearer invalid-token",
@@ -85,7 +104,7 @@ describe("Auth Middleware", () => {
 
       const next = vi.fn();
 
-      verifyToken(req, res, next);
+      await verifyToken(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(401);
       expect(res.json).toHaveBeenCalledWith({
@@ -94,7 +113,7 @@ describe("Auth Middleware", () => {
       expect(next).not.toHaveBeenCalled();
     });
 
-    it("should reject request with an expired access token", () => {
+    it("should reject request with an expired access token", async () => {
       const token = jwt.sign(
         {
           userId: "123456789",
@@ -120,7 +139,7 @@ describe("Auth Middleware", () => {
 
       const next = vi.fn();
 
-      verifyToken(req, res, next);
+      await verifyToken(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(401);
       expect(res.json).toHaveBeenCalledWith({
@@ -220,4 +239,3 @@ describe("Auth Middleware", () => {
     });
   });
 });
-

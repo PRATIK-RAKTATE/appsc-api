@@ -34,6 +34,7 @@ export const createAuthTokens = async (email) => {
       userId: user._id.toString(),
       email: user.email,
       role: user.role,
+      tokenVersion: user.tokenVersion,
     },
     process.env.JWT_ACCESS_SECRET,
     {
@@ -44,6 +45,7 @@ export const createAuthTokens = async (email) => {
   const refreshToken = jwt.sign(
     {
       userId: user._id.toString(),
+      tokenVersion: user.tokenVersion,
     },
     process.env.JWT_REFRESH_SECRET,
     {
@@ -113,6 +115,7 @@ export const refreshAccessToken = async (refreshToken) => {
         userId: user._id.toString(),
         email: user.email,
         role: user.role,
+        tokenVersion: user.tokenVersion,
       },
       process.env.JWT_ACCESS_SECRET,
       {
