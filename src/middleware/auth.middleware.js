@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 
-export const verifyToken = (req, res, next) => {
+import { User } from "../models/user.model.js";
+
+export const verifyToken = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -17,7 +19,29 @@ export const verifyToken = (req, res, next) => {
       process.env.JWT_ACCESS_SECRET
     );
 
-    req.user = decoded;
+    const user = await User.findById(decoded.userId);
+    if (!user) {
+      return res.status(401).json({
+        message: "User not found",
+      });
+    }
+
+    if (decoded.tokenVersion !== user.tokenVersion) {
+      return res.status(401).json({
+        message: "Token has been revoked",
+      });
+    }
+
+    if (user.status !== "ACTIVE") {
+      return res.status(403).json({
+        message: `Account is ${user.status.toLowerCase()}`,
+      });
+    }
+
+    req.user = {
+      ...user.toObject(),
+      userId: user._id.toString(),
+    };
 
     next();
   } catch (error) {

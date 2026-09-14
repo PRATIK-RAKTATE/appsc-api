@@ -2,16 +2,15 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { User } from "../models/user.model.js";
 import { UserSession } from "../models/userSession.model.js";
-
+import { emitSessionRevoked } from "./socket.service.js";
 
 const ACCESS_TOKEN_EXPIRES_IN = "15m";
 const REFRESH_TOKEN_EXPIRES_IN = "7d";
 const REFRESH_TOKEN_EXPIRES_MS = 7 * 24 * 60 * 60 * 1000;
 
-export const createAuthTokens = async (email) => { 
+export const createAuthTokens = async (email) => {
   const normalizedEmail = email.toLowerCase().trim();
 
-  // Find the user
   const user = await User.findOne({
     email: normalizedEmail,
   });
@@ -20,12 +19,31 @@ export const createAuthTokens = async (email) => {
     throw new Error("User not found");
   }
 
-  // Access token
+  // Collect the IDs of all sessions that are about to be revoked so we can
+  // target exactly those sockets with session_revoked – never the new device.
+  const activeSessions = await UserSession.find({
+    userId: user._id,
+    revokedAt: null,
+    expiresAt: { $gt: new Date() },
+  });
+
+  const revokedSessionIds = activeSessions.map((s) => s._id.toString());
+
+  await UserSession.updateMany(
+    {
+      userId: user._id,
+      revokedAt: null,
+      expiresAt: { $gt: new Date() },
+    },
+    { revokedAt: new Date() }
+  );
+
   const accessToken = jwt.sign(
     {
       userId: user._id.toString(),
       email: user.email,
       role: user.role,
+      tokenVersion: user.tokenVersion,
     },
     process.env.JWT_ACCESS_SECRET,
     {
@@ -33,29 +51,39 @@ export const createAuthTokens = async (email) => {
     }
   );
 
-  // Refresh token
   const refreshToken = jwt.sign(
     {
       userId: user._id.toString(),
+      tokenVersion: user.tokenVersion,
     },
     process.env.JWT_REFRESH_SECRET,
-    {
-      expiresIn: REFRESH_TOKEN_EXPIRES_IN,
-    }
+    { expiresIn: REFRESH_TOKEN_EXPIRES_IN }
   );
 
-  // Store only the hash of the refresh token
   const refreshTokenHash = await bcrypt.hash(refreshToken, 10);
 
-  const expiresAt = new Date(
-    Date.now() + REFRESH_TOKEN_EXPIRES_MS
-  );
+  const expiresAt = new Date(Date.now() + REFRESH_TOKEN_EXPIRES_MS);
 
-  await UserSession.create({
+  const newSession = await UserSession.create({
     userId: user._id,
     refreshTokenHash,
     expiresAt,
   });
+
+  const accessToken = jwt.sign(
+    {
+      userId: user._id.toString(),
+      email: user.email,
+      role: user.role,
+      // `sid` lets socket.service associate sockets with exactly this session.
+      sid: newSession._id.toString(),
+    },
+    process.env.JWT_ACCESS_SECRET,
+    { expiresIn: ACCESS_TOKEN_EXPIRES_IN }
+  );
+
+  // Notify only the previously-active sessions' sockets — not the new device.
+  emitSessionRevoked(revokedSessionIds);
 
   return {
     accessToken,
@@ -65,10 +93,7 @@ export const createAuthTokens = async (email) => {
 
 export const refreshAccessToken = async (refreshToken) => {
   try {
-    const decoded = jwt.verify(
-      refreshToken,
-      process.env.JWT_REFRESH_SECRET
-    );
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
 
     const sessions = await UserSession.find({
       userId: decoded.userId,
@@ -105,11 +130,11 @@ export const refreshAccessToken = async (refreshToken) => {
         userId: user._id.toString(),
         email: user.email,
         role: user.role,
+        sid: validSession._id.toString(),
+        tokenVersion: user.tokenVersion,
       },
       process.env.JWT_ACCESS_SECRET,
-      {
-        expiresIn: "15m",
-      }
+      { expiresIn: "15m" }
     );
 
     return accessToken;

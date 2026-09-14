@@ -13,6 +13,7 @@ credentials/
 *.key
 *.p12
 *.pfx
+q
 
 # Logs
 logs/
