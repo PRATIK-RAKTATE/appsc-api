@@ -14,6 +14,7 @@ import paymentRoutes from "./routes/payment.routes.js";
 import adminCourseRoutes from "./routes/adminCourse.routes.js";
 import adminUserRoutes from "./routes/adminUser.routes.js";
 import annotationRoutes from "./routes/annotation.routes.js";
+import examRoutes from "./routes/exam.routes.js";
 
 const app = express();
 
@@ -42,5 +43,6 @@ app.use("/api/payments", paymentRoutes);
 app.use("/api/admin/courses", adminCourseRoutes);
 app.use("/api/admin/users", adminUserRoutes);
 app.use("/api/annotations", annotationRoutes);
+app.use("/api/exams", examRoutes);
 
 export default app;
