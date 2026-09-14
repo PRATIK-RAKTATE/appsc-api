@@ -65,8 +65,8 @@ describe("Book Reading Controllers", () => {
         blocks: [
           {
             blockNumber: 1,
-            englishText: "Hello",
-            teluguText: "హలో",
+            contentEn: "Hello",
+            contentTe: "హలో",
           },
         ],
       };

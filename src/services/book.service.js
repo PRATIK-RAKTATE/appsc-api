@@ -5,11 +5,8 @@ import { BookBlock } from "../models/bookBlock.model.js";
 import { ReadingProgress } from "../models/readingProgress.model.js";
 import { UploadJob, UPLOAD_JOB_STATUS } from "../models/uploadJob.model.js";
 import { addTranslationJob } from "./translation.queue.service.js";
-import {
-  generatePresignedUploadUrl,
-  getFileUrl,
-  deleteFileFromR2,
-} from "./r2.service.js";
+import { generateSnippet } from "../utils/searchHelper.js";
+
 
 const sanitizeFileName = (fileName = "document") => {
   return fileName.replace(/[^a-zA-Z0-9_.-]/g, "_").substring(0, 100);
@@ -381,19 +378,25 @@ export const getUploadJobsByBook = async (bookId) => {
 export const createBookBlock = async ({
   chapterId,
   blockNumber,
-  englishText,
+  contentEn,
 }) => {
+  const chapter = await Chapter.findById(chapterId);
+  if (!chapter) {
+    throw new Error("Chapter not found");
+  }
+
   const bookBlock = await BookBlock.create({
+    bookId: chapter.bookId,
     chapterId,
     blockNumber,
-    englishText,
+    contentEn,
   });
 
   if (typeof addTranslationJob === "function") {
     try {
       await addTranslationJob({
         blockId: bookBlock._id,
-        englishText: bookBlock.englishText,
+        contentEn: bookBlock.contentEn,
       });
     } catch {
       // Background worker translation error shouldn't fail block creation
@@ -471,4 +474,45 @@ export const saveReadingProgress = async ({
   ).lean();
 
   return progress;
+};
+
+/**
+ * Search for text within a book's content blocks.
+ * @param {string} bookId - ID of the book to search in.
+ * @param {Object} options - Search options (q, chapterId, limit).
+ * @returns {Promise<Array>} - List of matching blocks with snippets.
+ */
+export const searchBookBlocks = async ({ bookId, q, chapterId, limit = 20 }) => {
+  if (!bookId) throw new Error("Book ID is required");
+  if (!q || !q.trim()) throw new Error("Search query is required");
+
+  const query = {
+    bookId: new mongoose.Types.ObjectId(bookId),
+    $text: { $search: q },
+  };
+
+  if (chapterId) {
+    query.chapterId = new mongoose.Types.ObjectId(chapterId);
+  }
+
+  const maxLimit = Math.min(50, limit);
+
+  const results = await BookBlock.find(
+    query,
+    {
+      score: { $meta: "textScore" },
+    }
+  )
+    .sort({ score: { $meta: "textScore" } })
+    .limit(maxLimit)
+    .lean();
+
+  return results.map((block) => ({
+    blockId: block._id,
+    chapterId: block.chapterId,
+    blockNumber: block.blockNumber,
+    score: block.score,
+    snippetEn: generateSnippet(block.contentEn, q),
+    snippetTe: generateSnippet(block.contentTe, q),
+  }));
 };

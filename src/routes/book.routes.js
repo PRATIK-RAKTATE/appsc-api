@@ -14,6 +14,7 @@ import {
   getBookReaderController,
   getReadingProgressController,
   saveReadingProgressController,
+  searchBookBlocksController,
 } from "../controllers/book.controller.js";
 import { verifyToken, requireRole } from "../middleware/auth.middleware.js";
 
@@ -92,6 +93,12 @@ router.put(
   "/:bookId/progress",
   verifyToken,
   saveReadingProgressController
+);
+
+router.get(
+  "/:bookId/search",
+  verifyToken,
+  searchBookBlocksController
 );
 
 // Book CRUD operations

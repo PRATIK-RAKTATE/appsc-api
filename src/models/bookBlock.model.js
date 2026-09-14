@@ -16,6 +16,13 @@ export const REVIEW_STATUS = {
 
 const bookBlockSchema = new Schema(
   {
+    bookId: {
+      type: Schema.Types.ObjectId,
+      ref: "Book",
+      required: true,
+      index: true,
+    },
+
     chapterId: {
       type: Schema.Types.ObjectId,
       ref: "Chapter",
@@ -29,13 +36,23 @@ const bookBlockSchema = new Schema(
       min: 1,
     },
 
-    englishText: {
+    titleEn: {
+      type: String,
+      trim: true,
+    },
+
+    titleTe: {
+      type: String,
+      trim: true,
+    },
+
+    contentEn: {
       type: String,
       required: true,
       trim: true,
     },
 
-    teluguText: {
+    contentTe: {
       type: String,
       trim: true,
       default: null,
@@ -63,6 +80,24 @@ const bookBlockSchema = new Schema(
 bookBlockSchema.index(
   { chapterId: 1, blockNumber: 1 },
   { unique: true }
+);
+
+bookBlockSchema.index(
+  {
+    titleEn: "text",
+    titleTe: "text",
+    contentEn: "text",
+    contentTe: "text",
+  },
+  {
+    weights: {
+      titleEn: 5,
+      titleTe: 5,
+      contentEn: 1,
+      contentTe: 1,
+    },
+    default_language: "none",
+  }
 );
 
 export const BookBlock = model("BookBlock", bookBlockSchema);

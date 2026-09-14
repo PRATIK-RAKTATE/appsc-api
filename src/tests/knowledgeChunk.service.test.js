@@ -170,7 +170,7 @@ describe("Knowledge Chunk Service", () => {
         _id: "block-1",
         chapterId: "chapter-id",
         blockNumber: 1,
-        englishText: Array(600).fill("study").join(" "),
+        contentEn: Array(600).fill("study").join(" "),
       },
     ];
 
