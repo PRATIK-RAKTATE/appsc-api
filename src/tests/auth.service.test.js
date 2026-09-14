@@ -168,12 +168,12 @@ describe("Auth Service", () => {
 
     User.findById.mockResolvedValue(user);
 
-    const accessToken = await refreshAccessToken(tokens.refreshToken);
+    const refreshedToken = await refreshAccessToken(tokens.refreshToken);
 
-    expect(accessToken).toBeDefined();
+    expect(refreshedToken).toBeDefined();
 
     const decoded = jwt.verify(
-      accessToken,
+      refreshedToken,
       process.env.JWT_ACCESS_SECRET
     );
 
