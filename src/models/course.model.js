@@ -9,129 +9,49 @@ export const COURSE_STATUS = {
 };
 
 export const COURSE_ITEM_TYPES = {
+  VIDEO: "VIDEO",
+  EBOOK: "EBOOK",
+  TEST_SERIES: "TEST_SERIES",
   BOOK: "BOOK",
   TEST: "TEST",
-  VIDEO: "VIDEO",
 };
 
 export const PRICE_CURRENCY = {
   INR: "INR",
 };
 
-const priceTierSchema = new Schema(
+const curriculumItemSchema = new Schema(
   {
-    name: {
+    itemType: {
       type: String,
+      enum: ["VIDEO", "EBOOK", "TEST_SERIES"],
       required: true,
-      trim: true,
     },
-    validityDays: {
-      type: Number,
+    itemTypeRef: {
+      type: String,
+      enum: ["VideoLecture", "EBook", "TestSeries"],
       required: true,
-      min: 1,
     },
-    price: {
-      type: Number,
+    refId: {
+      type: Schema.Types.ObjectId,
       required: true,
-      min: 0,
+      refPath: "curriculum.itemTypeRef",
     },
-    salePrice: {
-      type: Number,
-      min: 0,
-    },
-    currency: {
-      type: String,
-      default: PRICE_CURRENCY.INR,
-      uppercase: true,
-      trim: true,
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
-  },
-  { _id: true }
-);
-
-const courseThumbnailSchema = new Schema(
-  {
-    url: {
-      type: String,
-      trim: true,
-    },
-    key: {
-      type: String,
-      trim: true,
-    },
-  },
-  { _id: false }
-);
-
-const courseVideoSchema = new Schema(
-  {
     title: {
       type: String,
-      trim: true,
+      required: true,
     },
-    videoUrl: {
-      type: String,
-      trim: true,
-    },
-    duration: {
+    order: {
       type: Number,
-      min: 0,
+      required: true,
+      default: 0,
     },
-    r2Key: {
-      type: String,
-      trim: true,
-    },
-    videoId: {
-      type: Schema.Types.ObjectId,
-      ref: "Video",
+    isFreePreview: {
+      type: Boolean,
+      default: false,
     },
   },
   { _id: true }
-);
-
-const bundledContentSchema = new Schema(
-  {
-    books: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Book",
-      },
-    ],
-    tests: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Test",
-      },
-    ],
-    videos: [courseVideoSchema],
-  },
-  { _id: false }
-);
-
-const pricingSchema = new Schema(
-  {
-    amount: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    salePrice: {
-      type: Number,
-      min: 0,
-    },
-    currency: {
-      type: String,
-      default: PRICE_CURRENCY.INR,
-      uppercase: true,
-      trim: true,
-    },
-    priceTiers: [priceTierSchema],
-  },
-  { _id: false }
 );
 
 const courseSchema = new Schema(
@@ -143,41 +63,41 @@ const courseSchema = new Schema(
       minlength: 2,
       maxlength: 200,
     },
-
+    slug: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
     description: {
       type: String,
       trim: true,
       maxlength: 5000,
     },
-
-    thumbnail: {
-      type: courseThumbnailSchema,
-      default: () => ({}),
-      set: (val) => {
-        if (typeof val === "string") {
-          return { url: val.trim(), key: "" };
-        }
-        return val;
+    thumbnailUrl: {
+      type: String,
+      trim: true,
+    },
+    basePrice: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    discountedPrice: {
+      type: Number,
+      min: 0,
+      validate: {
+        validator: function (val) {
+          if (val == null) return true;
+          return val <= this.basePrice;
+        },
+        message: "discountedPrice must be less than or equal to basePrice",
       },
     },
-
-    validityDays: {
+    validityInDays: {
       type: Number,
       required: true,
       min: 1,
-      default: 365,
     },
-
-    pricing: {
-      type: pricingSchema,
-      required: true,
-    },
-
-    bundledContent: {
-      type: bundledContentSchema,
-      default: () => ({ books: [], tests: [], videos: [] }),
-    },
-
     status: {
       type: String,
       enum: Object.values(COURSE_STATUS),
@@ -185,35 +105,30 @@ const courseSchema = new Schema(
       default: COURSE_STATUS.DRAFT,
       index: true,
     },
-
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
       index: true,
     },
-
-    tags: [
-      {
-        type: String,
-        trim: true,
-      },
-    ],
+    curriculum: [curriculumItemSchema],
   },
   {
     timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
   }
 );
 
-courseSchema.index({ status: 1, createdAt: -1 });
-
-courseSchema.virtual("modules", {
-  ref: "CourseModule",
-  localField: "_id",
-  foreignField: "courseId",
-  options: { sort: { order: 1 } },
+courseSchema.pre("validate", function () {
+  if (this.isModified("title") && !this.slug && this.title) {
+    this.slug = this.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)+/g, "");
+  }
 });
 
 export const Course = model("Course", courseSchema);
