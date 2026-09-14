@@ -1,4 +1,10 @@
-import { startExamSession, autosaveAnswer } from "../services/exam.service.js";
+import { 
+  startExamSession, 
+  autosaveAnswer, 
+  submitExam, 
+  getExamReview, 
+  getExamAnalytics 
+} from "../services/exam.service.js";
 
 export const startExamController = async (req, res) => {
   try {
@@ -44,6 +50,58 @@ export const autosaveAnswerController = async (req, res) => {
   } catch (error) {
     console.error("Autosave answer error:", error);
     return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const submitExamController = async (req, res) => {
+  try {
+    const { attemptId } = req.params;
+    const userId = req.user.userId;
+
+    const result = await submitExam(attemptId, userId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Exam submitted successfully",
+      data: result,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getReviewController = async (req, res) => {
+  try {
+    const { attemptId } = req.params;
+    const userId = req.user.userId;
+
+    const review = await getExamReview(attemptId, userId);
+
+    return res.status(200).json(review);
+  } catch (error) {
+    return res.status(error.message.includes("submission") ? 403 : 400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getAnalyticsController = async (req, res) => {
+  try {
+    const { attemptId } = req.params;
+    const userId = req.user.userId;
+
+    const analytics = await getExamAnalytics(attemptId, userId);
+
+    return res.status(200).json(analytics);
+  } catch (error) {
+    return res.status(error.message.includes("submission") ? 403 : 400).json({
       success: false,
       message: error.message,
     });
