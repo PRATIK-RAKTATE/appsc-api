@@ -2,16 +2,16 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { User } from "../models/user.model.js";
 import { UserSession } from "../models/userSession.model.js";
+import { notifySessionTerminated } from "./socket.service.js";
 
 
 const ACCESS_TOKEN_EXPIRES_IN = "15m";
 const REFRESH_TOKEN_EXPIRES_IN = "7d";
 const REFRESH_TOKEN_EXPIRES_MS = 7 * 24 * 60 * 60 * 1000;
 
-export const createAuthTokens = async (email) => { 
+export const createAuthTokens = async (email) => {
   const normalizedEmail = email.toLowerCase().trim();
 
-  // Find the user
   const user = await User.findOne({
     email: normalizedEmail,
   });
@@ -20,7 +20,15 @@ export const createAuthTokens = async (email) => {
     throw new Error("User not found");
   }
 
-  // Access token
+  await UserSession.updateMany(
+    {
+      userId: user._id,
+      revokedAt: null,
+      expiresAt: { $gt: new Date() },
+    },
+    { revokedAt: new Date() }
+  );
+
   const accessToken = jwt.sign(
     {
       userId: user._id.toString(),
@@ -33,7 +41,6 @@ export const createAuthTokens = async (email) => {
     }
   );
 
-  // Refresh token
   const refreshToken = jwt.sign(
     {
       userId: user._id.toString(),
@@ -44,7 +51,6 @@ export const createAuthTokens = async (email) => {
     }
   );
 
-  // Store only the hash of the refresh token
   const refreshTokenHash = await bcrypt.hash(refreshToken, 10);
 
   const expiresAt = new Date(
@@ -56,6 +62,8 @@ export const createAuthTokens = async (email) => {
     refreshTokenHash,
     expiresAt,
   });
+
+  notifySessionTerminated(user._id.toString());
 
   return {
     accessToken,

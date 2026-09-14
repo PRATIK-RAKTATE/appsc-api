@@ -132,6 +132,7 @@ export const uploadFileToR2 = async ({
   return await r2Client.send(command);
 };
 
+export const generateSignedUrl = async (key, expiresIn = R2_SIGNED_URL_EXPIRY_SECONDS) => {
 /**
  * Delete an object from R2.
  */
@@ -145,7 +146,12 @@ export const deleteFileFromR2 = async (key) => {
     throw new Error("R2 object key is required");
   }
 
-  const command = new DeleteObjectCommand({
+  const parsedExpiry = Number(expiresIn);
+  if (!Number.isInteger(parsedExpiry) || parsedExpiry <= 0 || parsedExpiry > 86400) {
+    throw new Error("expiresIn must be a positive number up to 86400 seconds");
+  }
+
+  const command = new GetObjectCommand({
     Bucket: bucket,
     Key: key,
   });
