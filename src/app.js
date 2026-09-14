@@ -13,6 +13,7 @@ import videoRoutes from "./routes/video.routes.js";
 import paymentRoutes from "./routes/payment.routes.js";
 import adminCourseRoutes from "./routes/adminCourse.routes.js";
 import adminUserRoutes from "./routes/adminUser.routes.js";
+import annotationRoutes from "./routes/annotation.routes.js";
 
 const app = express();
 
@@ -40,5 +41,6 @@ app.use("/api/videos", videoRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/admin/courses", adminCourseRoutes);
 app.use("/api/admin/users", adminUserRoutes);
+app.use("/api/annotations", annotationRoutes);
 
 export default app;
