@@ -1,6 +1,14 @@
 import jwt from "jsonwebtoken";
 
-const userSockets = new Map();
+/**
+ * Map from sessionId → Set<socket>.
+ *
+ * Each authenticated socket stores the sessionId decoded from its JWT
+ * (`sid` claim, populated by auth.service when the session document is
+ * created). This lets us emit session_revoked exclusively to sockets that
+ * belong to the revoked session, never to the newly-logged-in device.
+ */
+const sessionSockets = new Map();
 
 export const registerSocketHandlers = (io) => {
   io.use((socket, next) => {
@@ -11,12 +19,10 @@ export const registerSocketHandlers = (io) => {
     }
 
     try {
-      const decoded = jwt.verify(
-        token,
-        process.env.JWT_ACCESS_SECRET
-      );
+      const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 
       socket.userId = decoded.userId;
+      socket.sessionId = decoded.sid;
       next();
     } catch (error) {
       next(new Error("Authentication error"));
@@ -24,42 +30,53 @@ export const registerSocketHandlers = (io) => {
   });
 
   io.on("connection", (socket) => {
-    const userId = socket.userId;
+    const { sessionId } = socket;
 
-    if (!userSockets.has(userId)) {
-      userSockets.set(userId, new Set());
+    if (!sessionSockets.has(sessionId)) {
+      sessionSockets.set(sessionId, new Set());
     }
 
-    userSockets.get(userId).add(socket);
+    sessionSockets.get(sessionId).add(socket);
 
     socket.on("disconnect", () => {
-      const sockets = userSockets.get(userId);
+      const sockets = sessionSockets.get(sessionId);
       if (sockets) {
         sockets.delete(socket);
         if (sockets.size === 0) {
-          userSockets.delete(userId);
+          sessionSockets.delete(sessionId);
         }
       }
     });
   });
 };
 
+/** Test helper – clears all tracked sockets between test runs. */
 export const resetUserSockets = () => {
-  userSockets.clear();
+  sessionSockets.clear();
 };
 
-export const notifySessionTerminated = (userId) => {
-  const sockets = userSockets.get(userId);
-  if (!sockets) {
-    return;
-  }
-
+/**
+ * TASK-01.3.2 – Emit `session_revoked` to every socket that belongs to one
+ * of the specified (now-revoked) sessions.
+ *
+ * Only the sockets whose sessionId is in `revokedSessionIds` receive the
+ * event. The newly-authenticated device's socket (which carries the new
+ * sessionId) is never targeted.
+ *
+ * @param {string[]} revokedSessionIds - Array of revoked session _id strings.
+ */
+export const emitSessionRevoked = (revokedSessionIds) => {
   const payload = {
     message:
       "Your session has been terminated due to login from another device",
   };
 
-  sockets.forEach((socket) => {
-    socket.emit("session:terminated", payload);
-  });
+  for (const sessionId of revokedSessionIds) {
+    const sockets = sessionSockets.get(sessionId);
+    if (!sockets) continue;
+
+    sockets.forEach((socket) => {
+      socket.emit("session_revoked", payload);
+    });
+  }
 };
