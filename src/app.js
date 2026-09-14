@@ -11,11 +11,14 @@ import testRoutes from "./routes/test.routes.js";
 import currentAffairsRoutes from "./routes/currentAffairs.routes.js";
 import videoRoutes from "./routes/video.routes.js";
 import paymentRoutes from "./routes/payment.routes.js";
+import { razorpayWebhookController } from "./controllers/payment.controller.js";
 import adminCourseRoutes from "./routes/adminCourse.routes.js";
 import adminUserRoutes from "./routes/adminUser.routes.js";
 
 const app = express();
 
+// Razorpay signs the exact request bytes, so this route must precede express.json().
+app.post("/api/webhooks/razorpay", express.raw({ type: "application/json" }), razorpayWebhookController);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
