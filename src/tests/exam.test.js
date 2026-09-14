@@ -82,6 +82,7 @@ describe("Exam Session API", () => {
         { key: "C", text: { en: "5", te: "5" }, weight: 1 },
         { key: "D", text: { en: "6", te: "6" }, weight: 1 },
       ],
+      correctOption: "B",
       explaination: { en: "2+2=4", te: "2+2=4" },
     });
 
