@@ -38,10 +38,24 @@ export const createAuthTokens = async (email) => {
     { revokedAt: new Date() }
   );
 
-  // Create the new session document first so its _id is available for the
-  // access token's `sid` claim (used by socket.service to key sockets).
+  const accessToken = jwt.sign(
+    {
+      userId: user._id.toString(),
+      email: user.email,
+      role: user.role,
+      tokenVersion: user.tokenVersion,
+    },
+    process.env.JWT_ACCESS_SECRET,
+    {
+      expiresIn: ACCESS_TOKEN_EXPIRES_IN,
+    }
+  );
+
   const refreshToken = jwt.sign(
-    { userId: user._id.toString() },
+    {
+      userId: user._id.toString(),
+      tokenVersion: user.tokenVersion,
+    },
     process.env.JWT_REFRESH_SECRET,
     { expiresIn: REFRESH_TOKEN_EXPIRES_IN }
   );
@@ -117,6 +131,7 @@ export const refreshAccessToken = async (refreshToken) => {
         email: user.email,
         role: user.role,
         sid: validSession._id.toString(),
+        tokenVersion: user.tokenVersion,
       },
       process.env.JWT_ACCESS_SECRET,
       { expiresIn: "15m" }

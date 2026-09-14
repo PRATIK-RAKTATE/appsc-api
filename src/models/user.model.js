@@ -5,7 +5,14 @@ const { Schema, model } = mongoose;
 export const USER_ROLES = {
   STUDENT: "STUDENT",
   ADMIN: "ADMIN",
+  SUPER_ADMIN: "SUPER_ADMIN",
   MENTOR: "MENTOR",
+};
+
+export const USER_STATUS = {
+  ACTIVE: "ACTIVE",
+  SUSPENDED: "SUSPENDED",
+  BANNED: "BANNED",
 };
 
 const userSchema = new Schema(
@@ -26,6 +33,12 @@ const userSchema = new Schema(
       trim: true,
       index: true,
     },
+    
+    phone: {
+      type: String,
+      trim: true,
+      index: true,
+    },
 
     role: {
       type: String,
@@ -34,9 +47,24 @@ const userSchema = new Schema(
       default: USER_ROLES.STUDENT,
     },
 
+    status: {
+      type: String,
+      enum: Object.values(USER_STATUS),
+      default: USER_STATUS.ACTIVE,
+    },
+    
+    suspendedReason: {
+      type: String,
+    },
+
     isVerified: {
       type: Boolean,
       default: false,
+    },
+    
+    tokenVersion: {
+      type: Number,
+      default: 0,
     },
   },
   {

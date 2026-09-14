@@ -67,11 +67,9 @@ export const getCoursePurchaseAmount = async ({ courseId, priceTierId }) => {
   if (!course || course.status !== COURSE_STATUS.PUBLISHED) {
     throw new CouponValidationError("Course is not available for purchase", 404);
   }
-  let price = course.pricing.salePrice ?? course.pricing.amount;
+  let price = course.discountedPrice ?? course.basePrice;
   if (priceTierId) {
-    const tier = course.pricing.priceTiers.find((item) => item._id.toString() === priceTierId);
-    if (!tier || !tier.isActive) throw new CouponValidationError("Selected price tier is not available");
-    price = tier.salePrice ?? tier.price;
+    throw new CouponValidationError("Price tiers are no longer supported");
   }
   if (!Number.isFinite(price) || price < 0) throw new CouponValidationError("Course has invalid pricing");
   return roundMoney(price);
