@@ -12,7 +12,7 @@ vi.mock("jsonwebtoken", () => ({
 
 import {
   registerSocketHandlers,
-  notifySessionTerminated,
+  emitSessionRevoked,
   resetUserSockets,
 } from "../services/socket.service.js";
 
@@ -22,104 +22,79 @@ describe("Socket Service", () => {
     resetUserSockets();
   });
 
-  it("should add authenticated socket to user session map", () => {
+  it("should add an authenticated socket to the session socket map", () => {
     const mockSocket = {
       userId: "user-1",
-      handshake: {
-        auth: {
-          token: "valid-token",
-        },
-      },
+      sessionId: "session-1",
+      handshake: { auth: { token: "valid-token" } },
       on: vi.fn(),
       emit: vi.fn(),
     };
 
     const mockIo = {
-      use: vi.fn((middleware) => {
-        middleware(mockSocket, () => {});
-      }),
+      use: vi.fn((middleware) => middleware(mockSocket, () => {})),
       on: vi.fn((event, handler) => {
-        if (event === "connection") {
-          handler(mockSocket);
-        }
+        if (event === "connection") handler(mockSocket);
       }),
     };
 
-    mockJwtVerify.mockReturnValue({ userId: "user-1" });
+    mockJwtVerify.mockReturnValue({ userId: "user-1", sid: "session-1" });
 
     registerSocketHandlers(mockIo);
 
     expect(mockIo.use).toHaveBeenCalled();
-    expect(mockIo.on).toHaveBeenCalledWith(
-      "connection",
-      expect.any(Function)
-    );
+    expect(mockIo.on).toHaveBeenCalledWith("connection", expect.any(Function));
   });
 
-  it("should emit session:terminated to all sockets for the user", () => {
+  it("should emit session_revoked to a socket registered under the given sessionId", () => {
     const mockSocket = {
       userId: "user-1",
-      handshake: {
-        auth: {
-          token: "valid-token",
-        },
-      },
+      sessionId: "session-old",
+      handshake: { auth: { token: "valid-token" } },
       on: vi.fn(),
       emit: vi.fn(),
     };
 
     const mockIo = {
-      use: vi.fn((middleware) => {
-        middleware(mockSocket, () => {});
-      }),
+      use: vi.fn((middleware) => middleware(mockSocket, () => {})),
       on: vi.fn((event, handler) => {
-        if (event === "connection") {
-          handler(mockSocket);
-        }
+        if (event === "connection") handler(mockSocket);
       }),
     };
 
-    mockJwtVerify.mockReturnValue({ userId: "user-1" });
+    mockJwtVerify.mockReturnValue({ userId: "user-1", sid: "session-old" });
 
     registerSocketHandlers(mockIo);
-    notifySessionTerminated("user-1");
+    emitSessionRevoked(["session-old"]);
 
-    expect(mockSocket.emit).toHaveBeenCalledWith(
-      "session:terminated",
-      {
-        message:
-          "Your session has been terminated due to login from another device",
-      }
-    );
+    expect(mockSocket.emit).toHaveBeenCalledWith("session_revoked", {
+      message:
+        "Your session has been terminated due to login from another device",
+    });
   });
 
-  it("should do nothing when notifying a user with no active sockets", () => {
+  it("should do nothing when emitting to a sessionId with no active sockets", () => {
     const mockSocket = {
       userId: "user-1",
-      handshake: {
-        auth: {
-          token: "valid-token",
-        },
-      },
+      sessionId: "session-1",
+      handshake: { auth: { token: "valid-token" } },
       on: vi.fn(),
       emit: vi.fn(),
     };
 
     const mockIo = {
-      use: vi.fn((middleware) => {
-        middleware(mockSocket, () => {});
-      }),
+      use: vi.fn((middleware) => middleware(mockSocket, () => {})),
       on: vi.fn((event, handler) => {
-        if (event === "connection") {
-          handler(mockSocket);
-        }
+        if (event === "connection") handler(mockSocket);
       }),
     };
 
-    mockJwtVerify.mockReturnValue({ userId: "user-1" });
+    mockJwtVerify.mockReturnValue({ userId: "user-1", sid: "session-1" });
 
     registerSocketHandlers(mockIo);
-    notifySessionTerminated("user-without-sockets");
+
+    // Target a session that has no socket registered
+    emitSessionRevoked(["session-unknown"]);
 
     expect(mockSocket.emit).not.toHaveBeenCalled();
   });
