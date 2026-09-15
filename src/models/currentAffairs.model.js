@@ -8,6 +8,13 @@ export const CURRENT_AFFAIRS_STATUS = {
   ARCHIVED: "ARCHIVED",
 };
 
+export const RAG_STATUS = {
+  PENDING: "PENDING",
+  PROCESSING: "PROCESSING",
+  COMPLETED: "COMPLETED",
+  FAILED: "FAILED",
+};
+
 const attachmentSchema = new Schema(
   {
     url: {
@@ -58,8 +65,8 @@ const currentAffairsSchema = new Schema(
     },
 
     category: {
-      type: String,
-      enum: ['STATE_AP', 'NATIONAL', 'INTERNATIONAL', 'ECONOMY', 'POLITY', 'ENVIRONMENT', 'SCIENCE_TECH'],
+      type: Schema.Types.ObjectId,
+      ref: "Category",
       required: true,
       index: true,
     },

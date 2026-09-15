@@ -53,10 +53,6 @@ export const createCurrentAffairsController = async (req, res) => {
       createdBy,
     });
 
-    if (status === "PUBLISHED") {
-      await scheduleCurrentAffairsRagIngestion(article._id, "INDEX");
-    }
-
     return res.status(201).json({
       success: true,
       message: "Current affairs article created successfully",
