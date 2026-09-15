@@ -62,7 +62,7 @@ const userEntitlementSchema = new Schema(
   }
 );
 
-userEntitlementSchema.index({ userId: 1, courseId: 1 });
+userEntitlementSchema.index({ userId: 1, courseId: 1 }, { unique: true });
 userEntitlementSchema.index({ expiresAt: 1 });
 
 userEntitlementSchema.methods.isAccessValid = function () {

@@ -131,6 +131,17 @@ export const getCurrentAffairs = async (
     query.$text = { $search: filters.search };
   }
 
+  if (filters.startDate) {
+    query.publishedAt = { $gte: new Date(filters.startDate) };
+  }
+
+  if (filters.endDate) {
+    query.publishedAt = {
+      ...query.publishedAt,
+      $lte: new Date(filters.endDate),
+    };
+  }
+
   const skip = (Math.max(1, page) - 1) * Math.max(1, limit);
 
   const [articles, total] = await Promise.all([

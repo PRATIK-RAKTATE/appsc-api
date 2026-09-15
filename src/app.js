@@ -11,14 +11,18 @@ import testRoutes from "./routes/test.routes.js";
 import currentAffairsRoutes from "./routes/currentAffairs.routes.js";
 import videoRoutes from "./routes/video.routes.js";
 import paymentRoutes from "./routes/payment.routes.js";
+import { razorpayWebhookController } from "./controllers/payment.controller.js";
 import adminCourseRoutes from "./routes/adminCourse.routes.js";
 import adminUserRoutes from "./routes/adminUser.routes.js";
 import adminCurrentAffairsRoutes from "./routes/adminCurrentAffairs.routes.js";
 import annotationRoutes from "./routes/annotation.routes.js";
 import examRoutes from "./routes/exam.routes.js";
+import currentAffairsBookmarkRoutes from "./routes/currentAffairsBookmark.routes.js";
 
 const app = express();
 
+// Razorpay signs the exact request bytes, so this route must precede express.json().
+app.post("/api/webhooks/razorpay", express.raw({ type: "application/json" }), razorpayWebhookController);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -46,5 +50,6 @@ app.use("/api/admin/users", adminUserRoutes);
 app.use("/api/admin/current-affairs", adminCurrentAffairsRoutes);
 app.use("/api/annotations", annotationRoutes);
 app.use("/api/exams", examRoutes);
+app.use("/api/current-affairs/bookmarks", currentAffairsBookmarkRoutes);
 
 export default app;
