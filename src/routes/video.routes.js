@@ -1,6 +1,7 @@
 import express from "express";
 import { uploadVideoController, getVideoSignedUrlController } from "../controllers/video.controller.js";
 import { verifyToken, requireRole } from "../middleware/auth.middleware.js";
+import { auditLog } from "../middleware/audit.middleware.js";
 import multer from "multer";
 
 const router = express.Router();
@@ -23,6 +24,7 @@ router.post(
   verifyToken,
   requireRole("ADMIN", "MENTOR"),
   uploadMiddleware.single("video"),
+  auditLog({ resourceType: "VIDEO", action: "UPLOAD_VIDEO" }),
   uploadVideoController
 );
 

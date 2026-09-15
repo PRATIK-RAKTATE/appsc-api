@@ -12,20 +12,30 @@ import {
   requireRole,
 } from "../middleware/auth.middleware.js";
 
+import { auditLog } from "../middleware/audit.middleware.js";
+
 const router = express.Router();
 
 router.use(verifyToken, requireRole("ADMIN"));
 
 router.get("/", getAllPlatformSettingsController);
 
-router.patch("/", updatePlatformSettingsController);
+router.patch(
+  "/",
+  auditLog({ resourceType: "PLATFORM_SETTING", action: "UPDATE_PLATFORM_SETTINGS" }),
+  updatePlatformSettingsController
+);
 
 router.get("/:key", getPlatformSettingController);
 
-router.patch("/:key", async (req, res) => {
-  req.body.key = req.params.key;
+router.patch(
+  "/:key",
+  auditLog({ resourceType: "PLATFORM_SETTING", action: "UPDATE_PLATFORM_SETTING" }),
+  async (req, res) => {
+    req.body.key = req.params.key;
 
-  return updatePlatformSettingController(req, res);
-});
+    return updatePlatformSettingController(req, res);
+  }
+);
 
 export default router;
