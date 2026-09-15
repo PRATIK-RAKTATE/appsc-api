@@ -37,14 +37,14 @@ const chatReportSchema = new Schema(
 
     messageId: {
       type: Schema.Types.ObjectId,
-      ref: "Message",
+      ref: "ChatMessage",
       required: true,
       index: true,
     },
 
     chatId: {
       type: Schema.Types.ObjectId,
-      ref: "Chat",
+      ref: "StudentMentorThread",
       required: true,
       index: true,
     },
@@ -103,7 +103,7 @@ const chatReportSchema = new Schema(
 chatReportSchema.index({ status: 1, createdAt: -1 });
 chatReportSchema.index({ reporterId: 1, createdAt: -1 });
 chatReportSchema.index({ reportedUserId: 1, createdAt: -1 });
-chatReportSchema.index({ reporterId: 1, messageId: 1 });
+chatReportSchema.index({ reporterId: 1, messageId: 1 }, { unique: true });
 chatReportSchema.index({ chatId: 1, createdAt: -1 });
 
 chatReportSchema.virtual("reporter", {
@@ -121,14 +121,14 @@ chatReportSchema.virtual("reportedUser", {
 });
 
 chatReportSchema.virtual("reportedMessage", {
-  ref: "Message",
+  ref: "ChatMessage",
   localField: "messageId",
   foreignField: "_id",
   justOne: true,
 });
 
 chatReportSchema.virtual("chat", {
-  ref: "Chat",
+  ref: "StudentMentorThread",
   localField: "chatId",
   foreignField: "_id",
   justOne: true,

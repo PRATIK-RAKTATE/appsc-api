@@ -6,6 +6,7 @@ import { ReadingProgress } from "../models/readingProgress.model.js";
 import { UploadJob, UPLOAD_JOB_STATUS } from "../models/uploadJob.model.js";
 import { addTranslationJob } from "./translation.queue.service.js";
 import { generateSnippet } from "../utils/searchHelper.js";
+import { scheduleKnowledgeChunking } from "../queues/knowledgeChunk.queue.js";
 
 
 const sanitizeFileName = (fileName = "document") => {
@@ -474,6 +475,48 @@ export const saveReadingProgress = async ({
   ).lean();
 
   return progress;
+};
+
+/**
+ * Schedule reindexing of all chapters for a book.
+ * @param {string} bookId - ID of the book to reindex.
+ * @returns {Promise<Object>} - Reindex job summary.
+ */
+export const reindexBook = async (bookId) => {
+  if (!bookId) {
+    throw new Error("Book ID is required");
+  }
+
+  const book = await Book.findById(bookId);
+
+  if (!book) {
+    throw new Error("Book not found");
+  }
+
+  const chapters = await Chapter.find({ bookId }).select("_id").lean();
+
+  if (!chapters.length) {
+    return {
+      bookId: book._id.toString(),
+      chapterCount: 0,
+      jobIds: [],
+      message: "No chapters found to reindex",
+    };
+  }
+
+  const jobIds = [];
+
+  for (const chapter of chapters) {
+    const job = await scheduleKnowledgeChunking(chapter._id.toString());
+    jobIds.push(job.id);
+  }
+
+  return {
+    bookId: book._id.toString(),
+    chapterCount: chapters.length,
+    jobIds,
+    message: `Reindexing scheduled for ${chapters.length} chapter(s)`,
+  };
 };
 
 /**
