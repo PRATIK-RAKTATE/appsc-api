@@ -21,14 +21,14 @@ const moderationLogSchema = new Schema(
 
     chatId: {
       type: Schema.Types.ObjectId,
-      ref: "Chat",
+      ref: "StudentMentorThread",
       required: true,
       index: true,
     },
 
     messageId: {
       type: Schema.Types.ObjectId,
-      ref: "Message",
+      ref: "ChatMessage",
       index: true,
     },
 
@@ -80,14 +80,14 @@ moderationLogSchema.virtual("chatReport", {
 });
 
 moderationLogSchema.virtual("chat", {
-  ref: "Chat",
+  ref: "StudentMentorThread",
   localField: "chatId",
   foreignField: "_id",
   justOne: true,
 });
 
 moderationLogSchema.virtual("message", {
-  ref: "Message",
+  ref: "ChatMessage",
   localField: "messageId",
   foreignField: "_id",
   justOne: true,
