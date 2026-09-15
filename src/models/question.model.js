@@ -85,6 +85,12 @@ const questionSchema = new Schema(
       type: bilingualSchema,
       required: true,
     },
+
+    correctOption: {
+      type: String,
+      required: true,
+      enum: ["A", "B", "C", "D"],
+    },
   },
   { timestamps: true },
 );

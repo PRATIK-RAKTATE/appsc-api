@@ -7,9 +7,10 @@ import {
 
 describe("BookBlock Model", () => {
   const validBlock = {
+    bookId: "507f1f77bcf86cd799439011",
     chapterId: "507f1f77bcf86cd799439011",
     blockNumber: 1,
-    englishText: "India is a diverse country.",
+    contentEn: "India is a diverse country.",
   };
 
   it("should create a valid book block", async () => {
@@ -45,19 +46,19 @@ describe("BookBlock Model", () => {
     await expect(block.validate()).rejects.toThrow();
   });
 
-  it("should require englishText", async () => {
+  it("should require contentEn", async () => {
     const block = new BookBlock({
       ...validBlock,
-      englishText: undefined,
+      contentEn: undefined,
     });
 
     await expect(block.validate()).rejects.toThrow();
   });
 
-  it("should allow teluguText to be empty initially", async () => {
+  it("should allow contentTe to be empty initially", async () => {
     const block = new BookBlock(validBlock);
 
-    expect(block.teluguText).toBeNull();
+    expect(block.contentTe).toBeNull();
 
     await expect(block.validate()).resolves.toBeUndefined();
   });

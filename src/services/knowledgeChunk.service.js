@@ -71,7 +71,7 @@ export const createKnowledgeChunks = async (chapterId) => {
   }
 
   const fullText = blocks
-    .map((block) => block.englishText)
+    .map((block) => block.contentEn)
     .join("\n");
 
   const chunks = createSemanticChunks(fullText);

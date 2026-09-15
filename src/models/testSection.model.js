@@ -51,6 +51,14 @@ const testSectionSchema = new Schema(
       type: Boolean,
       default: false,
     },
+
+    questions: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Question",
+        required: true,
+      },
+    ],
   },
   {
     timestamps: true,

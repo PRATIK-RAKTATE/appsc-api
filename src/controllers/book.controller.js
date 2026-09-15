@@ -12,6 +12,7 @@ import {
   createBookBlock,
   getBookReader,
   getReadingProgress,
+  searchBookBlocks,
 } from "../services/book.service.js";
 import { scheduleReadingProgress } from "../services/readingProgress.queue.service.js";
 
@@ -267,19 +268,19 @@ export const getBookUploadJobsController = async (req, res) => {
 
 export const createBookBlockController = async (req, res) => {
   try {
-    const { chapterId, blockNumber, englishText } = req.body;
+    const { chapterId, blockNumber, contentEn } = req.body;
 
-    if (!chapterId || !blockNumber || !englishText) {
+    if (!chapterId || !blockNumber || !contentEn) {
       return res.status(400).json({
         success: false,
-        message: "chapterId, blockNumber and englishText are required",
+        message: "chapterId, blockNumber and contentEn are required",
       });
     }
 
     const bookBlock = await createBookBlock({
       chapterId,
       blockNumber,
-      englishText,
+      contentEn,
     });
 
     return res.status(201).json({
@@ -385,6 +386,47 @@ export const saveReadingProgressController = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Failed to schedule reading progress",
+    });
+  }
+};
+
+export const searchBookBlocksController = async (req, res) => {
+  try {
+    const { bookId } = req.params;
+    const { q, chapterId, limit } = req.query;
+
+    if (!q || !q.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Search query 'q' is required",
+      });
+    }
+
+    const results = await searchBookBlocks({
+      bookId,
+      q,
+      chapterId,
+      limit: Number(limit),
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Search results retrieved successfully",
+      data: results,
+    });
+  } catch (error) {
+    console.error("Search book blocks error:", error);
+
+    if (error.message === "Book ID is required" || error.message === "Search query is required") {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to search book blocks",
     });
   }
 };
