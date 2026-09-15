@@ -8,11 +8,6 @@ import { Category } from "../models/category.model.js";
 import { CurrentAffairsChunk } from "../models/currentAffairsChunk.model.js";
 import { scheduleCurrentAffairsRagIngestion } from "../queues/currentAffairsRag.queue.js";
 
-/**
- * Resolves a category by ObjectId or slug.
- * @param {string|mongoose.Types.ObjectId} categoryRef
- * @returns {Promise<Document>}
- */
 const resolveCategory = async (categoryRef) => {
   if (!categoryRef) {
     throw new Error("Category is required");
@@ -40,12 +35,6 @@ const resolveCategory = async (categoryRef) => {
   return category;
 };
 
-/**
- * Creates a new Current Affairs article.
- * Automatically triggers RAG ingestion if created directly with status = PUBLISHED.
- * @param {Object} data
- * @returns {Promise<Document>}
- */
 export const createCurrentAffairs = async (data) => {
   const category = await resolveCategory(data.category);
 
@@ -69,12 +58,6 @@ export const createCurrentAffairs = async (data) => {
   return article;
 };
 
-/**
- * Publishes an existing Current Affairs article.
- * Automatically queues RAG ingestion upon publication.
- * @param {string|mongoose.Types.ObjectId} id
- * @returns {Promise<Document>}
- */
 export const publishCurrentAffairs = async (id) => {
   if (!id) {
     throw new Error("Article ID is required");
@@ -92,17 +75,11 @@ export const publishCurrentAffairs = async (id) => {
 
   await article.save();
 
-  // Automatically triggers BullMQ RAG/vector ingestion queue
   await scheduleCurrentAffairsRagIngestion(article._id);
 
   return article;
 };
 
-/**
- * Fetches an article by its ID.
- * @param {string|mongoose.Types.ObjectId} id
- * @returns {Promise<Document>}
- */
 export const getCurrentAffairsById = async (id) => {
   if (!id) {
     throw new Error("Article ID is required");
@@ -119,12 +96,6 @@ export const getCurrentAffairsById = async (id) => {
   return article;
 };
 
-/**
- * Fetches a list of Current Affairs articles with optional filtering and pagination.
- * @param {Object} filters
- * @param {Object} pagination
- * @returns {Promise<Object>}
- */
 export const getCurrentAffairs = async (
   filters = {},
   { page = 1, limit = 10 } = {}
@@ -180,13 +151,6 @@ export const getCurrentAffairs = async (
   };
 };
 
-/**
- * Updates an existing Current Affairs article.
- * Re-triggers RAG ingestion if published article content/title is modified.
- * @param {string|mongoose.Types.ObjectId} id
- * @param {Object} updateData
- * @returns {Promise<Document>}
- */
 export const updateCurrentAffairs = async (id, updateData) => {
   if (!id) {
     throw new Error("Article ID is required");
@@ -230,11 +194,6 @@ export const updateCurrentAffairs = async (id, updateData) => {
   return article;
 };
 
-/**
- * Deletes an article and its associated RAG chunks.
- * @param {string|mongoose.Types.ObjectId} id
- * @returns {Promise<Document>}
- */
 export const deleteCurrentAffairs = async (id) => {
   if (!id) {
     throw new Error("Article ID is required");

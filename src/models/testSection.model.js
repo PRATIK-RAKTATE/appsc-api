@@ -65,7 +65,6 @@ const testSectionSchema = new Schema(
   }
 );
 
-// A test cannot have two sections with the same order.
 testSectionSchema.index(
   { testId: 1, order: 1 },
   { unique: true }
