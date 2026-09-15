@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
 vi.mock("../services/socket.service.js", () => ({
-  notifySessionTerminated: vi.fn(),
+  emitSessionRevoked: vi.fn(),
 }));
 
 vi.mock("../models/user.model.js", () => ({
@@ -23,7 +23,7 @@ vi.mock("../models/userSession.model.js", () => ({
 
 import { User } from "../models/user.model.js";
 import { UserSession } from "../models/userSession.model.js";
-import { notifySessionTerminated } from "../services/socket.service.js";
+import { emitSessionRevoked } from "../services/socket.service.js";
 
 import {
   createAuthTokens,
@@ -36,6 +36,11 @@ describe("Auth Service", () => {
 
     process.env.JWT_ACCESS_SECRET = "test-access-secret";
     process.env.JWT_REFRESH_SECRET = "test-refresh-secret";
+
+    // Default: no active sessions to revoke
+    UserSession.find.mockResolvedValue([]);
+    UserSession.updateMany.mockResolvedValue({});
+    UserSession.create.mockResolvedValue({ _id: "new-session-id" });
   });
 
   it("should create a 15-minute access token and 7-day refresh token", async () => {
@@ -46,8 +51,6 @@ describe("Auth Service", () => {
     };
 
     User.findOne.mockResolvedValue(user);
-    UserSession.create.mockResolvedValue({});
-    UserSession.updateMany.mockResolvedValue({});
 
     const result = await createAuthTokens("TEST@example.com");
 
@@ -74,6 +77,26 @@ describe("Auth Service", () => {
     expect(refreshDecoded.exp - refreshDecoded.iat).toBe(604800);
   });
 
+  it("should embed the new session id (sid) in the access token", async () => {
+    const user = {
+      _id: "123456789",
+      email: "test@example.com",
+      role: "STUDENT",
+    };
+
+    User.findOne.mockResolvedValue(user);
+    UserSession.create.mockResolvedValue({ _id: "new-session-id" });
+
+    const result = await createAuthTokens("test@example.com");
+
+    const decoded = jwt.verify(
+      result.accessToken,
+      process.env.JWT_ACCESS_SECRET
+    );
+
+    expect(decoded.sid).toBe("new-session-id");
+  });
+
   it("should store only the hashed refresh token", async () => {
     const user = {
       _id: "123456789",
@@ -82,8 +105,6 @@ describe("Auth Service", () => {
     };
 
     User.findOne.mockResolvedValue(user);
-    UserSession.create.mockResolvedValue({});
-    UserSession.updateMany.mockResolvedValue({});
 
     const result = await createAuthTokens("test@example.com");
 
@@ -108,8 +129,6 @@ describe("Auth Service", () => {
     };
 
     User.findOne.mockResolvedValue(user);
-    UserSession.create.mockResolvedValue({});
-    UserSession.updateMany.mockResolvedValue({});
 
     await createAuthTokens("test@example.com");
 
@@ -123,7 +142,7 @@ describe("Auth Service", () => {
     );
   });
 
-  it("should notify session termination after creating a new session", async () => {
+  it("should emit session_revoked only to the revoked sessions (TASK-01.3.2)", async () => {
     const user = {
       _id: "123456789",
       email: "test@example.com",
@@ -131,14 +150,36 @@ describe("Auth Service", () => {
     };
 
     User.findOne.mockResolvedValue(user);
-    UserSession.create.mockResolvedValue({});
-    UserSession.updateMany.mockResolvedValue({});
+
+    // Two pre-existing active sessions (Device A's sessions)
+    UserSession.find.mockResolvedValue([
+      { _id: { toString: () => "old-session-1" } },
+      { _id: { toString: () => "old-session-2" } },
+    ]);
+
+    UserSession.create.mockResolvedValue({ _id: "new-session-id" });
 
     await createAuthTokens("test@example.com");
 
-    expect(notifySessionTerminated).toHaveBeenCalledWith(
-      user._id.toString()
-    );
+    expect(emitSessionRevoked).toHaveBeenCalledWith([
+      "old-session-1",
+      "old-session-2",
+    ]);
+  });
+
+  it("should call emitSessionRevoked with an empty array when no prior sessions exist", async () => {
+    const user = {
+      _id: "123456789",
+      email: "test@example.com",
+      role: "STUDENT",
+    };
+
+    User.findOne.mockResolvedValue(user);
+    UserSession.find.mockResolvedValue([]);
+
+    await createAuthTokens("test@example.com");
+
+    expect(emitSessionRevoked).toHaveBeenCalledWith([]);
   });
 
   it("should refresh the access token using a valid refresh token", async () => {
@@ -149,8 +190,6 @@ describe("Auth Service", () => {
     };
 
     User.findOne.mockResolvedValue(user);
-
-    UserSession.create.mockResolvedValue({});
 
     const tokens = await createAuthTokens("test@example.com");
 
@@ -192,8 +231,6 @@ describe("Auth Service", () => {
     };
 
     User.findOne.mockResolvedValue(user);
-    UserSession.create.mockResolvedValue({});
-    UserSession.updateMany.mockResolvedValue({});
 
     const tokens = await createAuthTokens("test@example.com");
 

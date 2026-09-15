@@ -190,7 +190,9 @@ paymentTransactionSchema.statics.verifyPaymentSignature = function ({
     .createHmac("sha256", secret)
     .update(body.toString())
     .digest("hex");
-  return expectedSignature === razorpaySignature;
+  const expected = Buffer.from(expectedSignature, "hex");
+  const received = Buffer.from(razorpaySignature, "hex");
+  return expected.length === received.length && crypto.timingSafeEqual(expected, received);
 };
 
 paymentTransactionSchema.statics.verifyWebhookSignature = function ({
@@ -205,7 +207,9 @@ paymentTransactionSchema.statics.verifyWebhookSignature = function ({
     .createHmac("sha256", secret)
     .update(typeof rawBody === "string" ? rawBody : JSON.stringify(rawBody))
     .digest("hex");
-  return expectedSignature === signature;
+  const expected = Buffer.from(expectedSignature, "hex");
+  const received = Buffer.from(signature, "hex");
+  return expected.length === received.length && crypto.timingSafeEqual(expected, received);
 };
 
 export const PaymentTransaction = model(
