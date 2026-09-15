@@ -65,6 +65,7 @@ describe("Current Affairs RAG Queue", () => {
       "process-current-affairs-rag",
       {
         currentAffairsId: "ca-id",
+        action: "INDEX",
       },
       {
         jobId: "current-affairs-rag-ca-id",
@@ -81,6 +82,32 @@ describe("Current Affairs RAG Queue", () => {
     expect(job).toEqual({
       id: "current-affairs-rag-ca-id",
     });
+  });
+
+  it("should add a current affairs RAG job with DELETE action", async () => {
+    const { scheduleCurrentAffairsRagIngestion } = await import(
+      "../queues/currentAffairsRag.queue.js"
+    );
+
+    await scheduleCurrentAffairsRagIngestion("ca-id", "DELETE");
+
+    expect(mockAdd).toHaveBeenCalledWith(
+      "process-current-affairs-rag",
+      {
+        currentAffairsId: "ca-id",
+        action: "DELETE",
+      },
+      {
+        jobId: "current-affairs-rag-ca-id",
+        attempts: 3,
+        backoff: {
+          type: "exponential",
+          delay: 2000,
+        },
+        removeOnComplete: true,
+        removeOnFail: 100,
+      }
+    );
   });
 
   it("should reject when current affairs ID is missing", async () => {

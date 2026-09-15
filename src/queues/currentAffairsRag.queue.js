@@ -10,7 +10,7 @@ export const currentAffairsRagQueue = new Queue("current-affairs-rag", {
  * @param {string|mongoose.Types.ObjectId} currentAffairsId
  * @returns {Promise<Job>}
  */
-export const scheduleCurrentAffairsRagIngestion = async (currentAffairsId) => {
+export const scheduleCurrentAffairsRagIngestion = async (currentAffairsId, action = "INDEX") => {
   if (!currentAffairsId) {
     throw new Error("Current affairs ID is required");
   }
@@ -33,6 +33,7 @@ export const scheduleCurrentAffairsRagIngestion = async (currentAffairsId) => {
     "process-current-affairs-rag",
     {
       currentAffairsId,
+      action,
     },
     {
       jobId,
