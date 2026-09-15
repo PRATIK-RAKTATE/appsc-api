@@ -52,6 +52,8 @@ describe("Question Schema", () => {
       en: "New Delhi is the capital of India.",
       te: "న్యూఢిల్లీ భారతదేశ రాజధాని.",
     },
+
+    correctOption: "B",
   };
 
   it("should create a valid question", () => {
