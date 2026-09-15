@@ -45,6 +45,13 @@ const currentAffairsSchema = new Schema(
       maxlength: 300,
     },
 
+    slug: {
+      type: String,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+
     summary: {
       type: String,
       trim: true,
@@ -61,6 +68,12 @@ const currentAffairsSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Category",
       required: true,
+      index: true,
+    },
+
+    date: {
+      type: Date,
+      default: Date.now,
       index: true,
     },
 
@@ -97,7 +110,7 @@ const currentAffairsSchema = new Schema(
       trim: true,
     },
 
-    coverImageUrl: {
+    thumbnailUrl: {
       type: String,
       trim: true,
     },
@@ -107,14 +120,13 @@ const currentAffairsSchema = new Schema(
       default: [],
     },
 
-    ragStatus: {
-      type: String,
-      enum: Object.values(RAG_STATUS),
-      default: RAG_STATUS.PENDING,
+    vectorIndexed: {
+      type: Boolean,
+      default: false,
       index: true,
     },
 
-    ragIndexedAt: {
+    vectorIndexedAt: {
       type: Date,
       default: null,
     },
@@ -131,7 +143,17 @@ const currentAffairsSchema = new Schema(
   }
 );
 
-// Useful for article search
+currentAffairsSchema.pre('validate', async function() {
+  if (this.title && !this.slug) {
+    this.slug = this.title
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+});
+
 currentAffairsSchema.index({
   title: "text",
   content: "text",
@@ -139,13 +161,11 @@ currentAffairsSchema.index({
   summary: "text",
 });
 
-// Useful for published article queries
 currentAffairsSchema.index({
   status: 1,
   publishedAt: -1,
 });
 
-// Useful for category + status queries
 currentAffairsSchema.index({
   category: 1,
   status: 1,

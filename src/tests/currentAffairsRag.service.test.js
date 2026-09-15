@@ -48,6 +48,7 @@ vi.mock("../services/embedding.service.js", () => ({
 import {
   cleanTextForRAG,
   ingestCurrentAffairsRAG,
+  deleteCurrentAffairsRAG,
 } from "../services/currentAffairsRag.service.js";
 
 describe("Current Affairs RAG Service", () => {
@@ -131,6 +132,7 @@ describe("Current Affairs RAG Service", () => {
 
       expect(mockCurrentAffairsFindByIdAndUpdate).toHaveBeenCalledWith("ca-123", {
         ragStatus: "PROCESSING",
+        vectorIndexed: false,
       });
 
       expect(mockGenerateEmbedding).toHaveBeenCalled();
@@ -158,6 +160,8 @@ describe("Current Affairs RAG Service", () => {
       expect(mockCurrentAffairsFindByIdAndUpdate).toHaveBeenCalledWith("ca-123", {
         ragStatus: "COMPLETED",
         ragIndexedAt: expect.any(Date),
+        vectorIndexed: true,
+        vectorIndexedAt: expect.any(Date),
       });
 
       expect(result).toHaveLength(1);
@@ -183,6 +187,24 @@ describe("Current Affairs RAG Service", () => {
 
       expect(mockCurrentAffairsFindByIdAndUpdate).toHaveBeenCalledWith("ca-error", {
         ragStatus: "FAILED",
+      });
+    });
+  });
+
+  describe("deleteCurrentAffairsRAG", () => {
+    it("should throw when currentAffairsId is missing", async () => {
+      await expect(deleteCurrentAffairsRAG()).rejects.toThrow(
+        "Current affairs ID is required"
+      );
+    });
+
+    it("should delete chunks and set vectorIndexed to false", async () => {
+      const caId = "ca-del-123";
+      await deleteCurrentAffairsRAG(caId);
+
+      expect(mockChunkDeleteMany).toHaveBeenCalledWith({ currentAffairsId: caId });
+      expect(mockCurrentAffairsFindByIdAndUpdate).toHaveBeenCalledWith(caId, {
+        vectorIndexed: false,
       });
     });
   });

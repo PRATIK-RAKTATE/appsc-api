@@ -3,18 +3,15 @@ import { UserSession } from "../models/userSession.model.js";
 import { UserEntitlement } from "../models/userEntitlement.model.js";
 import { TestSubmission, SUBMISSION_STATUS } from "../models/testSubmission.model.js";
 
-// Escape regex special characters to prevent ReDoS
 const escapeRegex = (string) => {
   if (!string) return "";
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 };
 
-// @desc    List and search users
-// @route   GET /api/admin/users
 export const getUsers = async (req, res) => {
   try {
     const { page = 1, limit = 10, search, role, status } = req.query;
-    
+
     const query = {};
 
     if (search) {
@@ -35,13 +32,13 @@ export const getUsers = async (req, res) => {
     }
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
-    
+
     const users = await User.find(query)
-      .select("-password") // If password existed, exclude it
+      .select("-password")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(parseInt(limit));
-      
+
     const total = await User.countDocuments(query);
 
     res.status(200).json({
@@ -59,8 +56,6 @@ export const getUsers = async (req, res) => {
   }
 };
 
-// @desc    Get user profile with aggregates
-// @route   GET /api/admin/users/:id
 export const getUserDetail = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -74,7 +69,6 @@ export const getUserDetail = async (req, res) => {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    // Promise.all to fetch enrollments and test stats
     const [enrollments, testStats] = await Promise.all([
       UserEntitlement.find({ userId }).populate("courseId", "title slug status").lean(),
       TestSubmission.aggregate([
@@ -107,8 +101,6 @@ export const getUserDetail = async (req, res) => {
   }
 };
 
-// @desc    Update user status
-// @route   PATCH /api/admin/users/:id/status
 export const updateUserStatus = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -134,7 +126,6 @@ export const updateUserStatus = async (req, res) => {
     user.status = status;
     if (status === "SUSPENDED" || status === "BANNED") {
       user.suspendedReason = suspendedReason || "";
-      // Bump token version to revoke access
       user.tokenVersion = (user.tokenVersion || 0) + 1;
     }
 
@@ -146,8 +137,6 @@ export const updateUserStatus = async (req, res) => {
   }
 };
 
-// @desc    Revoke all sessions for a user
-// @route   POST /api/admin/users/:id/revoke-sessions
 export const revokeUserSessions = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -161,11 +150,9 @@ export const revokeUserSessions = async (req, res) => {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    // Increment tokenVersion to invalidate existing JWT access tokens
     user.tokenVersion = (user.tokenVersion || 0) + 1;
     await user.save();
 
-    // Revoke refresh tokens in DB
     await UserSession.updateMany(
       { userId: user._id, revokedAt: null },
       { $set: { revokedAt: new Date() } }
@@ -176,4 +163,3 @@ export const revokeUserSessions = async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
-

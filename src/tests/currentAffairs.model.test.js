@@ -16,7 +16,7 @@ describe("CurrentAffairs Model", () => {
     tags: ["Andhra Pradesh", "Economy", "Industry"],
     source: "AP Information Bureau",
     sourceUrl: "https://example.com/ap-news",
-    coverImageUrl: "https://example.com/images/ap-industry.png",
+    thumbnailUrl: "https://example.com/images/ap-industry.png",
     attachments: [
       {
         url: "https://example.com/docs/policy.pdf",
@@ -31,7 +31,7 @@ describe("CurrentAffairs Model", () => {
 
     await expect(article.validate()).resolves.toBeUndefined();
     expect(article.status).toBe(CURRENT_AFFAIRS_STATUS.DRAFT);
-    expect(article.ragStatus).toBe(RAG_STATUS.PENDING);
+    expect(article.vectorIndexed).toBe(false);
     expect(article.publishedAt).toBeNull();
     expect(article.tags).toEqual(["andhra pradesh", "economy", "industry"]);
     expect(article.attachments).toHaveLength(1);
@@ -102,12 +102,12 @@ describe("CurrentAffairs Model", () => {
       ...validArticle,
       status: CURRENT_AFFAIRS_STATUS.PUBLISHED,
       publishedAt: new Date(),
-      ragStatus: RAG_STATUS.COMPLETED,
+      vectorIndexed: true,
     });
 
     await expect(article.validate()).resolves.toBeUndefined();
     expect(article.status).toBe(CURRENT_AFFAIRS_STATUS.PUBLISHED);
-    expect(article.ragStatus).toBe(RAG_STATUS.COMPLETED);
+    expect(article.vectorIndexed).toBe(true);
     expect(article.publishedAt).toBeInstanceOf(Date);
   });
 });
