@@ -47,6 +47,7 @@ export const ingestCurrentAffairsRAG = async (currentAffairsId) => {
   try {
     await CurrentAffairs.findByIdAndUpdate(article._id, {
       ragStatus: RAG_STATUS.PROCESSING,
+      vectorIndexed: false,
     });
 
     const cleanedContent = cleanTextForRAG(article.content);
@@ -67,6 +68,8 @@ export const ingestCurrentAffairsRAG = async (currentAffairsId) => {
       await CurrentAffairs.findByIdAndUpdate(article._id, {
         ragStatus: RAG_STATUS.COMPLETED,
         ragIndexedAt: new Date(),
+        vectorIndexed: true,
+        vectorIndexedAt: new Date(),
       });
       return [];
     }
@@ -127,6 +130,8 @@ export const ingestCurrentAffairsRAG = async (currentAffairsId) => {
     await CurrentAffairs.findByIdAndUpdate(article._id, {
       ragStatus: RAG_STATUS.COMPLETED,
       ragIndexedAt: new Date(),
+      vectorIndexed: true,
+      vectorIndexedAt: new Date(),
     });
 
     return CurrentAffairsChunk.find({
@@ -141,4 +146,20 @@ export const ingestCurrentAffairsRAG = async (currentAffairsId) => {
 
     throw error;
   }
+};
+
+/**
+ * Deletes all RAG chunks associated with a Current Affairs article and resets indexing status.
+ * @param {string|mongoose.Types.ObjectId} currentAffairsId
+ * @returns {Promise<void>}
+ */
+export const deleteCurrentAffairsRAG = async (currentAffairsId) => {
+  if (!currentAffairsId) {
+    throw new Error("Current affairs ID is required");
+  }
+
+  await CurrentAffairsChunk.deleteMany({ currentAffairsId });
+  await CurrentAffairs.findByIdAndUpdate(currentAffairsId, {
+    vectorIndexed: false,
+  });
 };
