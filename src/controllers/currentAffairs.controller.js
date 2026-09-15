@@ -107,7 +107,21 @@ export const getCurrentAffairsByIdController = async (req, res) => {
 
 export const getCurrentAffairsController = async (req, res) => {
   try {
-    const { category, status, tags, search, page, limit } = req.query;
+    const { category, status, tags, search, page, limit, startDate, endDate } = req.query;
+
+    if (startDate && Number.isNaN(Date.parse(startDate))) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid startDate format. Use ISO 8601 (e.g. 2026-01-01)",
+      });
+    }
+
+    if (endDate && Number.isNaN(Date.parse(endDate))) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid endDate format. Use ISO 8601 (e.g. 2026-12-31)",
+      });
+    }
 
     const result = await getCurrentAffairs(
       {
@@ -115,6 +129,8 @@ export const getCurrentAffairsController = async (req, res) => {
         status,
         tags: tags ? tags.split(",") : undefined,
         search,
+        startDate,
+        endDate,
       },
       { page, limit }
     );
