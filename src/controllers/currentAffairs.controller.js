@@ -6,6 +6,7 @@ import {
   updateCurrentAffairs,
   deleteCurrentAffairs,
 } from "../services/currentAffairs.service.js";
+import { scheduleCurrentAffairsRagIngestion } from "../queues/currentAffairsRag.queue.js";
 
 export const createCurrentAffairsController = async (req, res) => {
   try {
@@ -18,7 +19,7 @@ export const createCurrentAffairsController = async (req, res) => {
       status,
       source,
       sourceUrl,
-      coverImageUrl,
+      thumbnailUrl,
       attachments,
     } = req.body;
 
@@ -47,10 +48,14 @@ export const createCurrentAffairsController = async (req, res) => {
       status,
       source,
       sourceUrl,
-      coverImageUrl,
+      thumbnailUrl,
       attachments,
       createdBy,
     });
+
+    if (status === "PUBLISHED") {
+      await scheduleCurrentAffairsRagIngestion(article._id, "INDEX");
+    }
 
     return res.status(201).json({
       success: true,
@@ -107,14 +112,16 @@ export const getCurrentAffairsByIdController = async (req, res) => {
 
 export const getCurrentAffairsController = async (req, res) => {
   try {
-    const { category, status, tags, search, page, limit } = req.query;
+    const { category, status, startDate, endDate, q, tags, page, limit } = req.query;
 
     const result = await getCurrentAffairs(
       {
         category,
         status,
+        startDate,
+        endDate,
+        search: q,
         tags: tags ? tags.split(",") : undefined,
-        search,
       },
       { page, limit }
     );
@@ -144,6 +151,10 @@ export const updateCurrentAffairsController = async (req, res) => {
 
     const article = await updateCurrentAffairs(id, req.body);
 
+    if (article.status === "PUBLISHED") {
+      await scheduleCurrentAffairsRagIngestion(article._id, "INDEX");
+    }
+
     return res.status(200).json({
       success: true,
       message: "Current affairs article updated successfully",
@@ -158,11 +169,56 @@ export const updateCurrentAffairsController = async (req, res) => {
   }
 };
 
+export const updateCurrentAffairStatusController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!status) {
+      return res.status(400).json({
+        success: false,
+        message: "Status is required",
+      });
+    }
+
+    const article = await getCurrentAffairsById(id);
+
+    if (status === "PUBLISHED" && (!article.content || article.content.length < 50)) {
+      return res.status(400).json({
+        success: false,
+        message: "Content must be at least 50 characters to publish",
+      });
+    }
+
+    const updatedArticle = await updateCurrentAffairs(id, { status });
+
+    if (status === "PUBLISHED") {
+      await scheduleCurrentAffairsRagIngestion(id, "INDEX");
+    } else if (status === "ARCHIVED") {
+      await scheduleCurrentAffairsRagIngestion(id, "DELETE");
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Current affairs article status updated successfully",
+      data: updatedArticle,
+    });
+  } catch (error) {
+    console.error("Update Current Affair Status error:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to update current affairs article status",
+    });
+  }
+};
+
 export const deleteCurrentAffairsController = async (req, res) => {
   try {
     const { id } = req.params;
 
     const article = await deleteCurrentAffairs(id);
+
+    await scheduleCurrentAffairsRagIngestion(id, "DELETE");
 
     return res.status(200).json({
       success: true,

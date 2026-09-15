@@ -140,6 +140,16 @@ export const getCurrentAffairs = async (
     query.status = filters.status;
   }
 
+  if (filters.startDate || filters.endDate) {
+    query.date = {};
+    if (filters.startDate) {
+      query.date.$gte = new Date(filters.startDate);
+    }
+    if (filters.endDate) {
+      query.date.$lte = new Date(filters.endDate);
+    }
+  }
+
   if (filters.tags && filters.tags.length) {
     query.tags = {
       $in: Array.isArray(filters.tags) ? filters.tags : [filters.tags],
