@@ -17,6 +17,7 @@ import adminUserRoutes from "./routes/adminUser.routes.js";
 import annotationRoutes from "./routes/annotation.routes.js";
 import examRoutes from "./routes/exam.routes.js";
 import currentAffairsBookmarkRoutes from "./routes/currentAffairsBookmark.routes.js";
+import aiSettingRoutes from "./routes/aiSetting.routes.js";
 
 const app = express();
 
@@ -49,5 +50,6 @@ app.use("/api/admin/users", adminUserRoutes);
 app.use("/api/annotations", annotationRoutes);
 app.use("/api/exams", examRoutes);
 app.use("/api/current-affairs/bookmarks", currentAffairsBookmarkRoutes);
+app.use("/admin/ai-settings", aiSettingRoutes);
 
 export default app;

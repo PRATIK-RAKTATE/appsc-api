@@ -13,6 +13,7 @@ import {
   getBookReader,
   getReadingProgress,
   searchBookBlocks,
+  reindexBook,
 } from "../services/book.service.js";
 import { scheduleReadingProgress } from "../services/readingProgress.queue.service.js";
 
@@ -427,6 +428,35 @@ export const searchBookBlocksController = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: error.message || "Failed to search book blocks",
+    });
+  }
+};
+
+export const reindexBookController = async (req, res) => {
+  try {
+    const { bookId } = req.params;
+
+    if (!bookId) {
+      return res.status(400).json({
+        success: false,
+        message: "Book ID is required",
+      });
+    }
+
+    const result = await reindexBook(bookId);
+
+    return res.status(200).json({
+      success: true,
+      message: result.message,
+      data: result,
+    });
+  } catch (error) {
+    console.error("Reindex book error:", error);
+    const status = error.message === "Book not found" ? 404 : 500;
+
+    return res.status(status).json({
+      success: false,
+      message: error.message || "Failed to reindex book",
     });
   }
 };
