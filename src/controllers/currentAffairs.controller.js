@@ -108,8 +108,7 @@ export const getCurrentAffairsByIdController = async (req, res) => {
 
 export const getCurrentAffairsController = async (req, res) => {
   try {
-    const { category, status, startDate, endDate, q, tags, page, limit } = req.query;
-    const { category, status, tags, search, page, limit, startDate, endDate } = req.query;
+    const { category, status, startDate, endDate, q, search, tags, page, limit } = req.query;
 
     if (startDate && Number.isNaN(Date.parse(startDate))) {
       return res.status(400).json({
@@ -131,12 +130,7 @@ export const getCurrentAffairsController = async (req, res) => {
         status,
         startDate,
         endDate,
-        search: q,
-        tags: tags ? tags.split(",") : undefined,
-        search,
-        startDate,
-        endDate,
-        search: q,
+        search: search || q,
         tags: tags ? tags.split(",") : undefined,
       },
       { page, limit }

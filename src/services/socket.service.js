@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 
+import { registerChatSocketHandlers } from "../handlers/chat.socket.handler.js";
+
 /**
  * Map from sessionId → Set<socket>.
  *
@@ -9,10 +11,13 @@ import jwt from "jsonwebtoken";
  * belong to the revoked session, never to the newly-logged-in device.
  */
 const sessionSockets = new Map();
+const userSockets = new Map();
 
 export const registerSocketHandlers = (io) => {
   io.use((socket, next) => {
-    const token = socket.handshake.auth?.token;
+    const token =
+      socket.handshake.auth?.token ||
+      socket.handshake.headers?.authorization?.replace(/^Bearer\s+/i, "");
 
     if (!token) {
       return next(new Error("Authentication error"));
@@ -21,8 +26,9 @@ export const registerSocketHandlers = (io) => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 
-      socket.userId = decoded.userId;
+      socket.userId = decoded.userId || decoded.id;
       socket.sessionId = decoded.sid;
+      socket.userRole = decoded.role;
       next();
     } catch (error) {
       next(new Error("Authentication error"));
@@ -30,20 +36,46 @@ export const registerSocketHandlers = (io) => {
   });
 
   io.on("connection", (socket) => {
-    const { sessionId } = socket;
+    const { sessionId, userId } = socket;
 
-    if (!sessionSockets.has(sessionId)) {
-      sessionSockets.set(sessionId, new Set());
+    if (sessionId) {
+      if (!sessionSockets.has(sessionId)) {
+        sessionSockets.set(sessionId, new Set());
+      }
+      sessionSockets.get(sessionId).add(socket);
     }
 
-    sessionSockets.get(sessionId).add(socket);
+    if (userId) {
+      if (!userSockets.has(userId)) {
+        userSockets.set(userId, new Set());
+      }
+      userSockets.get(userId).add(socket);
+
+      if (typeof socket.join === "function") {
+        socket.join(`user:${userId}`);
+      }
+    }
+
+    registerChatSocketHandlers(io, socket);
 
     socket.on("disconnect", () => {
-      const sockets = sessionSockets.get(sessionId);
-      if (sockets) {
-        sockets.delete(socket);
-        if (sockets.size === 0) {
-          sessionSockets.delete(sessionId);
+      if (sessionId) {
+        const sockets = sessionSockets.get(sessionId);
+        if (sockets) {
+          sockets.delete(socket);
+          if (sockets.size === 0) {
+            sessionSockets.delete(sessionId);
+          }
+        }
+      }
+
+      if (userId) {
+        const sockets = userSockets.get(userId);
+        if (sockets) {
+          sockets.delete(socket);
+          if (sockets.size === 0) {
+            userSockets.delete(userId);
+          }
         }
       }
     });
@@ -53,6 +85,7 @@ export const registerSocketHandlers = (io) => {
 /** Test helper – clears all tracked sockets between test runs. */
 export const resetUserSockets = () => {
   sessionSockets.clear();
+  userSockets.clear();
 };
 
 /**

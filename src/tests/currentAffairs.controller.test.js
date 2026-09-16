@@ -25,6 +25,10 @@ vi.mock("../services/currentAffairs.service.js", () => ({
   deleteCurrentAffairs: deleteCurrentAffairsMock,
 }));
 
+vi.mock("../queues/currentAffairsRag.queue.js", () => ({
+  scheduleCurrentAffairsRagIngestion: vi.fn().mockResolvedValue(true),
+}));
+
 import {
   createCurrentAffairsController,
   publishCurrentAffairsController,
