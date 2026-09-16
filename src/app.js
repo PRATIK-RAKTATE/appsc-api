@@ -16,6 +16,7 @@ import adminUserRoutes from "./routes/adminUser.routes.js";
 import adminCurrentAffairsRoutes from "./routes/adminCurrentAffairs.routes.js";
 import annotationRoutes from "./routes/annotation.routes.js";
 import examRoutes from "./routes/exam.routes.js";
+import aiRoutes from "./routes/ai.routes.js";
 
 const app = express();
 
@@ -46,5 +47,6 @@ app.use("/api/admin/users", adminUserRoutes);
 app.use("/api/admin/current-affairs", adminCurrentAffairsRoutes);
 app.use("/api/annotations", annotationRoutes);
 app.use("/api/exams", examRoutes);
+app.use("/api/ai", aiRoutes);
 
 export default app;
