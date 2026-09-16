@@ -178,6 +178,75 @@ describe("Current Affairs Controller", () => {
         },
       });
     });
+
+    it("should pass startDate and endDate to the service", async () => {
+      const res = createResponse();
+      const result = {
+        data: [{ _id: "1" }],
+        total: 1,
+        page: 1,
+        limit: 10,
+        totalPages: 1,
+      };
+      getCurrentAffairsMock.mockResolvedValue(result);
+
+      await getCurrentAffairsController(
+        {
+          query: {
+            category: "cat-1",
+            startDate: "2026-01-01",
+            endDate: "2026-12-31",
+            page: "1",
+            limit: "10",
+          },
+        },
+        res
+      );
+
+      expect(getCurrentAffairsMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          startDate: "2026-01-01",
+          endDate: "2026-12-31",
+        }),
+        { page: "1", limit: "10" }
+      );
+
+      expect(res.status).toHaveBeenCalledWith(200);
+    });
+
+    it("should return 400 for invalid startDate format", async () => {
+      const res = createResponse();
+
+      await getCurrentAffairsController(
+        { query: { startDate: "not-a-date", page: "1", limit: "10" } },
+        res
+      );
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          success: false,
+          message: expect.stringContaining("startDate"),
+        })
+      );
+    });
+
+    it("should return 400 for invalid endDate format", async () => {
+      const res = createResponse();
+
+      await getCurrentAffairsController(
+        { query: { endDate: "not-a-date", page: "1", limit: "10" } },
+        res
+      );
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          success: false,
+          message: expect.stringContaining("endDate"),
+        })
+      );
+    });
   });
 
   describe("updateCurrentAffairsController", () => {

@@ -256,6 +256,130 @@ describe("Current Affairs Service", () => {
       expect(result.total).toBe(2);
       expect(result.totalPages).toBe(1);
     });
+
+    it("should filter articles by startDate only", async () => {
+      const articles = [{ _id: "1" }];
+
+      const mockQuery = {
+        populate: vi.fn().mockReturnThis(),
+        sort: vi.fn().mockReturnThis(),
+        skip: vi.fn().mockReturnThis(),
+        limit: vi.fn().mockResolvedValue(articles),
+      };
+
+      mockCurrentAffairsFind.mockReturnValue(mockQuery);
+      mockCurrentAffairsCountDocuments.mockResolvedValue(1);
+
+      const startDate = "2026-01-01";
+      const result = await getCurrentAffairs(
+        { startDate },
+        { page: 1, limit: 10 }
+      );
+
+      expect(mockCurrentAffairsFind).toHaveBeenCalled();
+      const callArgs = mockCurrentAffairsFind.mock.calls[0][0];
+      expect(callArgs.publishedAt.$gte).toBeInstanceOf(Date);
+      expect(callArgs.publishedAt.$gte.toISOString()).toContain("2026-01-01");
+      expect(result.data).toHaveLength(1);
+    });
+
+    it("should filter articles by endDate only", async () => {
+      const articles = [{ _id: "1" }];
+
+      const mockQuery = {
+        populate: vi.fn().mockReturnThis(),
+        sort: vi.fn().mockReturnThis(),
+        skip: vi.fn().mockReturnThis(),
+        limit: vi.fn().mockResolvedValue(articles),
+      };
+
+      mockCurrentAffairsFind.mockReturnValue(mockQuery);
+      mockCurrentAffairsCountDocuments.mockResolvedValue(1);
+
+      const endDate = "2026-12-31";
+      const result = await getCurrentAffairs(
+        { endDate },
+        { page: 1, limit: 10 }
+      );
+
+      const callArgs = mockCurrentAffairsFind.mock.calls[0][0];
+      expect(callArgs.publishedAt.$lte).toBeInstanceOf(Date);
+      expect(callArgs.publishedAt.$lte.toISOString()).toContain("2026-12-31");
+      expect(result.data).toHaveLength(1);
+    });
+
+    it("should filter articles by both startDate and endDate", async () => {
+      const articles = [{ _id: "1" }];
+
+      const mockQuery = {
+        populate: vi.fn().mockReturnThis(),
+        sort: vi.fn().mockReturnThis(),
+        skip: vi.fn().mockReturnThis(),
+        limit: vi.fn().mockResolvedValue(articles),
+      };
+
+      mockCurrentAffairsFind.mockReturnValue(mockQuery);
+      mockCurrentAffairsCountDocuments.mockResolvedValue(1);
+
+      await getCurrentAffairs(
+        { startDate: "2026-01-01", endDate: "2026-06-30" },
+        { page: 1, limit: 10 }
+      );
+
+      const callArgs = mockCurrentAffairsFind.mock.calls[0][0];
+      expect(callArgs.publishedAt).toHaveProperty("$gte");
+      expect(callArgs.publishedAt).toHaveProperty("$lte");
+      expect(callArgs.publishedAt.$gte.toISOString()).toContain("2026-01-01");
+      expect(callArgs.publishedAt.$lte.toISOString()).toContain("2026-06-30");
+    });
+
+    it("should not apply date filter when startDate and endDate are absent", async () => {
+      const articles = [{ _id: "1" }];
+
+      const mockQuery = {
+        populate: vi.fn().mockReturnThis(),
+        sort: vi.fn().mockReturnThis(),
+        skip: vi.fn().mockReturnThis(),
+        limit: vi.fn().mockResolvedValue(articles),
+      };
+
+      mockCurrentAffairsFind.mockReturnValue(mockQuery);
+      mockCurrentAffairsCountDocuments.mockResolvedValue(1);
+
+      await getCurrentAffairs(
+        { category: categoryId },
+        { page: 1, limit: 10 }
+      );
+
+      const callArgs = mockCurrentAffairsFind.mock.calls[0][0];
+      expect(callArgs.publishedAt).toBeUndefined();
+    });
+
+    it("should combine date filter with category filter", async () => {
+      mockCategoryFindById.mockResolvedValue({ _id: categoryId });
+
+      const articles = [{ _id: "1" }];
+
+      const mockQuery = {
+        populate: vi.fn().mockReturnThis(),
+        sort: vi.fn().mockReturnThis(),
+        skip: vi.fn().mockReturnThis(),
+        limit: vi.fn().mockResolvedValue(articles),
+      };
+
+      mockCurrentAffairsFind.mockReturnValue(mockQuery);
+      mockCurrentAffairsCountDocuments.mockResolvedValue(1);
+
+      await getCurrentAffairs(
+        { category: categoryId, startDate: "2026-01-01", endDate: "2026-12-31" },
+        { page: 1, limit: 10 }
+      );
+
+      const callArgs = mockCurrentAffairsFind.mock.calls[0][0];
+      expect(callArgs.category.toString()).toBe(categoryId);
+      expect(callArgs.publishedAt).toHaveProperty("$gte");
+      expect(callArgs.publishedAt).toHaveProperty("$lte");
+    });
   });
 
   describe("updateCurrentAffairs", () => {
