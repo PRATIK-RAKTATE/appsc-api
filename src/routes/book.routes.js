@@ -15,6 +15,7 @@ import {
   getReadingProgressController,
   saveReadingProgressController,
   searchBookBlocksController,
+  reindexBookController,
 } from "../controllers/book.controller.js";
 import { verifyToken, requireRole } from "../middleware/auth.middleware.js";
 import { auditLog } from "../middleware/audit.middleware.js";
@@ -105,6 +106,14 @@ router.get(
   "/:bookId/search",
   verifyToken,
   searchBookBlocksController
+);
+
+router.post(
+  "/:bookId/reindex",
+  verifyToken,
+  requireRole("ADMIN"),
+  auditLog({ resourceType: "BOOK", action: "REINDEX_BOOK" }),
+  reindexBookController
 );
 
 // Book CRUD operations

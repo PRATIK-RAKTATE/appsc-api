@@ -75,6 +75,15 @@ const chatMessageSchema = new Schema(
     readAt: {
       type: Date,
     },
+
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+
+    deletedAt: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
