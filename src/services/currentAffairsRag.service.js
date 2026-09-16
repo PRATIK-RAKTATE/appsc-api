@@ -3,11 +3,6 @@ import { CurrentAffairsChunk } from "../models/currentAffairsChunk.model.js";
 import { createSemanticChunks } from "./knowledgeChunk.service.js";
 import { generateEmbedding } from "./embedding.service.js";
 
-/**
- * Strips HTML tags and normalizes whitespace from text.
- * @param {string} text
- * @returns {string}
- */
 export const cleanTextForRAG = (text) => {
   if (!text || typeof text !== "string") {
     return "";
@@ -26,11 +21,6 @@ export const cleanTextForRAG = (text) => {
     .trim();
 };
 
-/**
- * Processes and ingests a Current Affairs article into the vector database.
- * @param {string|mongoose.Types.ObjectId} currentAffairsId
- * @returns {Promise<Array>} List of generated CurrentAffairsChunk documents
- */
 export const ingestCurrentAffairsRAG = async (currentAffairsId) => {
   if (!currentAffairsId) {
     throw new Error("Current affairs ID is required");
@@ -47,6 +37,7 @@ export const ingestCurrentAffairsRAG = async (currentAffairsId) => {
   try {
     await CurrentAffairs.findByIdAndUpdate(article._id, {
       ragStatus: RAG_STATUS.PROCESSING,
+      vectorIndexed: false,
     });
 
     const cleanedContent = cleanTextForRAG(article.content);
@@ -67,6 +58,8 @@ export const ingestCurrentAffairsRAG = async (currentAffairsId) => {
       await CurrentAffairs.findByIdAndUpdate(article._id, {
         ragStatus: RAG_STATUS.COMPLETED,
         ragIndexedAt: new Date(),
+        vectorIndexed: true,
+        vectorIndexedAt: new Date(),
       });
       return [];
     }
@@ -118,7 +111,6 @@ export const ingestCurrentAffairsRAG = async (currentAffairsId) => {
       await CurrentAffairsChunk.bulkWrite(operations);
     }
 
-    // Clean up any stale chunks if the chunk count is now lower than previously
     await CurrentAffairsChunk.deleteMany({
       currentAffairsId: article._id,
       chunkIndex: { $gte: chunks.length },
@@ -127,6 +119,8 @@ export const ingestCurrentAffairsRAG = async (currentAffairsId) => {
     await CurrentAffairs.findByIdAndUpdate(article._id, {
       ragStatus: RAG_STATUS.COMPLETED,
       ragIndexedAt: new Date(),
+      vectorIndexed: true,
+      vectorIndexedAt: new Date(),
     });
 
     return CurrentAffairsChunk.find({
@@ -141,4 +135,15 @@ export const ingestCurrentAffairsRAG = async (currentAffairsId) => {
 
     throw error;
   }
+};
+
+export const deleteCurrentAffairsRAG = async (currentAffairsId) => {
+  if (!currentAffairsId) {
+    throw new Error("Current affairs ID is required");
+  }
+
+  await CurrentAffairsChunk.deleteMany({ currentAffairsId });
+  await CurrentAffairs.findByIdAndUpdate(currentAffairsId, {
+    vectorIndexed: false,
+  });
 };

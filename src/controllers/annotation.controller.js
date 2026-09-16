@@ -22,7 +22,6 @@ export const createAnnotation = async (req, res) => {
     }
 
     if (type === ANNOTATION_TYPE.BOOKMARK) {
-      // Prevent duplicate bookmarks for the exact same page/chapter
       const existingBookmark = await Annotation.findOne({
         userId: req.user.userId,
         bookId,
@@ -34,7 +33,6 @@ export const createAnnotation = async (req, res) => {
         ],
       });
 
-      // Be specific: check if chapter matches if provided, or page matches
       const exactDuplicate = await Annotation.findOne({
         userId: req.user.userId,
         bookId,
@@ -109,7 +107,6 @@ export const updateAnnotation = async (req, res) => {
       return res.status(404).json({ success: false, message: "Annotation not found" });
     }
 
-    // IDOR guard
     if (annotation.userId.toString() !== req.user.userId.toString()) {
       return res.status(403).json({ success: false, message: "Unauthorized to update this annotation" });
     }
@@ -139,7 +136,6 @@ export const deleteAnnotation = async (req, res) => {
       return res.status(404).json({ success: false, message: "Annotation not found" });
     }
 
-    // IDOR guard
     if (annotation.userId.toString() !== req.user.userId.toString()) {
       return res.status(403).json({ success: false, message: "Unauthorized to delete this annotation" });
     }
@@ -151,4 +147,3 @@ export const deleteAnnotation = async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
-
