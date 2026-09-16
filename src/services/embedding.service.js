@@ -1,6 +1,6 @@
 import { openRouterConfig } from "../config/openrouter.js";
 
-const EMBEDDING_DIMENSIONS = 1536;
+export const EMBEDDING_DIMENSIONS = 1536;
 
 export const generateEmbedding = async (text) => {
   if (!text || typeof text !== "string") {
@@ -47,4 +47,19 @@ export const generateEmbedding = async (text) => {
   }
 
   return embedding;
+};
+
+/**
+ * Generate a query embedding for similarity search.
+ * Validates the query string and delegates to generateEmbedding.
+ *
+ * @param {string} queryText - The search query to embed.
+ * @returns {Promise<number[]>} - A 1536-dimensional vector.
+ */
+export const generateQueryEmbedding = async (queryText) => {
+  if (!queryText || typeof queryText !== "string" || !queryText.trim()) {
+    throw new Error("Query text is required for embedding generation");
+  }
+
+  return generateEmbedding(queryText.trim());
 };
