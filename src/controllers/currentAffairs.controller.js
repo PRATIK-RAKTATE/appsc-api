@@ -109,7 +109,6 @@ export const getCurrentAffairsByIdController = async (req, res) => {
 export const getCurrentAffairsController = async (req, res) => {
   try {
     const { category, status, startDate, endDate, q, tags, page, limit } = req.query;
-    const { category, status, tags, search, page, limit, startDate, endDate } = req.query;
 
     if (startDate && Number.isNaN(Date.parse(startDate))) {
       return res.status(400).json({
