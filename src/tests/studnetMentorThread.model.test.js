@@ -65,11 +65,13 @@ describe("StudentMentorThread Model", () => {
     expect(thread.status).toBe(MENTOR_THREAD_STATUS.CLOSED);
   });
 
-  it("should allow lastMessageAt to be omitted", async () => {
+  it("should allow lastMessageAt to be omitted and default to current time", async () => {
     const thread = new StudentMentorThread({ studentId, mentorId });
 
     await expect(thread.validate()).resolves.toBeUndefined();
-    expect(thread.lastMessageAt).toBeUndefined();
+    // default: Date.now — value should be a Date close to now
+    expect(thread.lastMessageAt).toBeInstanceOf(Date);
+    expect(Date.now() - thread.lastMessageAt.getTime()).toBeLessThan(5000);
   });
 
   it("should define timestamp fields", () => {
@@ -99,8 +101,19 @@ describe("StudentMentorThread Model", () => {
     expect(listingIndex).toBeDefined();
   });
 
+  it("should allow a thread to be paused", async () => {
+    const thread = new StudentMentorThread({
+      ...validThread,
+      status: MENTOR_THREAD_STATUS.PAUSED,
+    });
+
+    await expect(thread.validate()).resolves.toBeUndefined();
+    expect(thread.status).toBe(MENTOR_THREAD_STATUS.PAUSED);
+  });
+
   it("should export all thread status values", () => {
     expect(MENTOR_THREAD_STATUS.ACTIVE).toBe("ACTIVE");
     expect(MENTOR_THREAD_STATUS.CLOSED).toBe("CLOSED");
+    expect(MENTOR_THREAD_STATUS.PAUSED).toBe("PAUSED");
   });
 });
