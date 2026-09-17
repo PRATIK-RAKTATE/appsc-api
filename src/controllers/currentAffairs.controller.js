@@ -132,11 +132,6 @@ export const getCurrentAffairsController = async (req, res) => {
         endDate,
         search: q,
         tags: tags ? tags.split(",") : undefined,
-        search,
-        startDate,
-        endDate,
-        search: q,
-        tags: tags ? tags.split(",") : undefined,
       },
       { page, limit }
     );
