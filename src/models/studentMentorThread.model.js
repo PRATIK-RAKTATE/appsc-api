@@ -32,6 +32,12 @@ const studentMentorThreadSchema = new Schema(
       index: true,
     },
 
+    topicId: {
+      type: Schema.Types.ObjectId,
+      ref: "Topic",
+      index: true,
+    },
+
     lastMessageAt: {
       type: Date,
       default: Date.now,
