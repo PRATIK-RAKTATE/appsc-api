@@ -22,6 +22,8 @@ import currentAffairsBookmarkRoutes from "./routes/currentAffairsBookmark.routes
 import aiSettingRoutes from "./routes/aiSetting.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
 import adminChatRoutes from "./routes/adminChat.routes.js";
+import mentorRoutes from "./routes/mentor.routes.js";
+import adminMentorRoutes from "./routes/adminMentor.routes.js";
 
 const app = express();
 
@@ -59,5 +61,7 @@ app.use("/api/current-affairs/bookmarks", currentAffairsBookmarkRoutes);
 app.use("/admin/ai-settings", aiSettingRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/admin/chat", adminChatRoutes);
+app.use("/api/mentors", mentorRoutes);
+app.use("/api/admin/mentors", adminMentorRoutes);
 
 export default app;
