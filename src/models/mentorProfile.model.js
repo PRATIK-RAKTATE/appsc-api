@@ -2,36 +2,14 @@ import mongoose from "mongoose";
 
 const { Schema, model } = mongoose;
 
-export const MENTOR_APPROVAL_STATUS = {
+export const MENTOR_STATUS = {
   PENDING: "PENDING",
   APPROVED: "APPROVED",
   REJECTED: "REJECTED",
 };
 
-const credentialSchema = new Schema(
-  {
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-      maxlength: 200,
-    },
-
-    institution: {
-      type: String,
-      required: true,
-      trim: true,
-      maxlength: 200,
-    },
-
-    year: {
-      type: Number,
-      min: 1900,
-      max: new Date().getFullYear(),
-    },
-  },
-  { _id: false }
-);
+// Keep legacy alias so any existing code that imports MENTOR_APPROVAL_STATUS still works.
+export const MENTOR_APPROVAL_STATUS = MENTOR_STATUS;
 
 const mentorProfileSchema = new Schema(
   {
@@ -45,36 +23,61 @@ const mentorProfileSchema = new Schema(
 
     bio: {
       type: String,
+      required: true,
       trim: true,
       maxlength: 2000,
     },
 
-    credentials: {
-      type: [credentialSchema],
+    expertise: {
+      type: [String],
+      default: [],
+      index: true,
+    },
+
+    qualifications: {
+      type: [String],
       default: [],
     },
 
-    approvalStatus: {
+    languages: {
+      type: [String],
+      default: [],
+    },
+
+    experienceYears: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    status: {
       type: String,
-      enum: Object.values(MENTOR_APPROVAL_STATUS),
+      enum: Object.values(MENTOR_STATUS),
       required: true,
-      default: MENTOR_APPROVAL_STATUS.PENDING,
+      default: MENTOR_STATUS.PENDING,
       index: true,
+    },
+
+    rejectionReason: {
+      type: String,
+      default: null,
     },
 
     approvedAt: {
       type: Date,
+      default: null,
     },
 
     approvedBy: {
       type: Schema.Types.ObjectId,
       ref: "User",
+      default: null,
     },
 
-    isActive: {
-      type: Boolean,
-      default: true,
-      index: true,
+    maxMentees: {
+      type: Number,
+      default: 50,
+      min: 1,
     },
   },
   {
@@ -82,9 +85,6 @@ const mentorProfileSchema = new Schema(
   }
 );
 
-mentorProfileSchema.index({
-  approvalStatus: 1,
-  isActive: 1,
-});
+mentorProfileSchema.index({ status: 1, expertise: 1 });
 
 export const MentorProfile = model("MentorProfile", mentorProfileSchema);

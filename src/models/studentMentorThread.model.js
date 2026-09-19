@@ -5,6 +5,7 @@ const { Schema, model } = mongoose;
 export const MENTOR_THREAD_STATUS = {
   ACTIVE: "ACTIVE",
   CLOSED: "CLOSED",
+  PAUSED: "PAUSED",
 };
 
 const studentMentorThreadSchema = new Schema(
@@ -39,6 +40,7 @@ const studentMentorThreadSchema = new Schema(
 
     lastMessageAt: {
       type: Date,
+      default: Date.now,
     },
   },
   {
@@ -46,11 +48,13 @@ const studentMentorThreadSchema = new Schema(
   }
 );
 
+// Prevent duplicate threads for the same student–mentor pair.
 studentMentorThreadSchema.index(
   { studentId: 1, mentorId: 1 },
   { unique: true }
 );
 
+// Efficient listing of a mentor's threads sorted by recent activity.
 studentMentorThreadSchema.index({
   mentorId: 1,
   status: 1,
