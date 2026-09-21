@@ -4,7 +4,8 @@ import {
   autosaveAnswerController, 
   submitExamController, 
   getReviewController, 
-  getAnalyticsController 
+  getAnalyticsController,
+  getLeaderboardController,
 } from "../controllers/exam.controller.js";
 import { verifyToken } from "../middleware/auth.middleware.js";
 
@@ -38,6 +39,12 @@ router.get(
   "/attempts/:attemptId/analytics",
   verifyToken,
   getAnalyticsController
+);
+
+router.get(
+  "/:testId/leaderboard",
+  verifyToken,
+  getLeaderboardController
 );
 
 export default router;

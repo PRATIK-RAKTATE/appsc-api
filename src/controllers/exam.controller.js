@@ -5,6 +5,8 @@ import {
   getExamReview, 
   getExamAnalytics 
 } from "../services/exam.service.js";
+import { evaluateExamAttempt } from "../services/scoring.service.js";
+import { getLeaderboard } from "../services/leaderboard.service.js";
 
 export const startExamController = async (req, res) => {
   try {
@@ -61,14 +63,43 @@ export const submitExamController = async (req, res) => {
     const { attemptId } = req.params;
     const userId = req.user.userId;
 
-    const result = await submitExam(attemptId, userId);
+    const scorecard = await evaluateExamAttempt(attemptId, userId);
 
     return res.status(200).json({
       success: true,
-      message: "Exam submitted successfully",
+      message: scorecard.idempotent
+        ? "Exam already submitted. Returning existing scorecard."
+        : "Exam submitted successfully",
+      data: scorecard,
+    });
+  } catch (error) {
+    console.error("Submit exam error:", error);
+    const status =
+      error.message.includes("not found") || error.message.includes("unauthorized")
+        ? 404
+        : 400;
+    return res.status(status).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getLeaderboardController = async (req, res) => {
+  try {
+    const { testId } = req.params;
+    const userId = req.user?.userId ?? null;
+    const page = Math.max(1, parseInt(req.query.page ?? "1", 10));
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit ?? "50", 10)));
+
+    const result = await getLeaderboard(testId, { userId, page, limit });
+
+    return res.status(200).json({
+      success: true,
       data: result,
     });
   } catch (error) {
+    console.error("Get leaderboard error:", error);
     return res.status(400).json({
       success: false,
       message: error.message,
