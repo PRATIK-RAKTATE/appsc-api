@@ -2,6 +2,7 @@ import "./config/env.js";
 import "./workers/knowledgeChunk.worker.js";
 import "./workers/readingProgress.worker.js";
 import "./workers/currentAffairsRag.worker.js";
+import "./workers/translation.worker.js"
 import { startMongoDBBackupJob } from "./jobs/mongodbBackup.job.js";
 import { scheduleExpiryCron } from "./jobs/expiryCron.js";
 
