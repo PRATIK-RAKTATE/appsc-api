@@ -158,10 +158,20 @@ describe("Exam Review and Analytics API", () => {
     const q1Review = reviewData.find(r => r.questionId.toString() === q1Id.toString());
     expect(q1Review.status).toBe("CORRECT");
     expect(q1Review.marksObtained).toBe(10);
+    expect(q1Review.studentAnswer).toBe("B");
+    expect(q1Review.selectedOption).toBe("B");
+    expect(q1Review.correctKey).toBe("B");
+    expect(q1Review.correctOption).toBe("B");
+    expect(q1Review.explanationEn).toBe("2");
+    expect(q1Review.explanationTe).toBe("2");
+    expect(q1Review.explanation).toEqual({ en: "2", te: "2" });
 
     const q2Review = reviewData.find(r => r.questionId.toString() === q2Id.toString());
     expect(q2Review.status).toBe("INCORRECT");
     expect(q2Review.marksObtained).toBe(-2.5); // 10 * 0.25
+    expect(q2Review.studentAnswer).toBe("A");
+    expect(q2Review.correctKey).toBe("B");
+    expect(q2Review.explanation).toEqual({ en: "4", te: "4" });
   });
 
   it("should calculate analytics and weak topics correctly", async () => {
