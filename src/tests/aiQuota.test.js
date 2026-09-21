@@ -46,6 +46,7 @@ let mongoServer;
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
   await mongoose.connect(mongoServer.getUri());
+  await DailyAiUsage.init();
 });
 
 afterAll(async () => {
@@ -196,6 +197,23 @@ describe("aiQuota.service — free-tier user (limit 5)", () => {
 
     const r2 = await checkAndConsumeQuota(MOCK_USER_ID);
     expect(r2.remaining).toBe(QUERY_LIMITS.FREE - 2);
+  });
+
+  it("does not exceed the limit under concurrent requests", async () => {
+    const results = await Promise.all(
+      Array.from({ length: 10 }, () => checkAndConsumeQuota(MOCK_USER_ID))
+    );
+
+    expect(results.filter((result) => result.allowed)).toHaveLength(
+      QUERY_LIMITS.FREE
+    );
+    expect(results.filter((result) => !result.allowed)).toHaveLength(5);
+
+    const doc = await DailyAiUsage.findOne({
+      userId: MOCK_USER_ID,
+      dateKey: getTodayUTC(),
+    });
+    expect(doc.count).toBe(QUERY_LIMITS.FREE);
   });
 });
 

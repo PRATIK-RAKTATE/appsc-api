@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import { DailyAiUsage } from "../models/dailyAiUsage.model.js";
 import { UserEntitlement, ENTITLEMENT_STATUS } from "../models/userEntitlement.model.js";
 
@@ -46,16 +45,22 @@ export const getEndOfDayUTC = () => {
 // ---------------------------------------------------------------------------
 
 /**
- * Returns true if the user has at least one non-expired ACTIVE entitlement.
+ * Returns true if the user has at least one currently valid ACTIVE entitlement.
  *
  * @param {string|mongoose.Types.ObjectId} userId
  * @returns {Promise<boolean>}
  */
 const isEnrolledUser = async (userId) => {
+  if (!userId) {
+    throw new Error("User ID is required to check AI quota");
+  }
+
+  const now = new Date();
   const active = await UserEntitlement.findOne({
     userId,
     status: ENTITLEMENT_STATUS.ACTIVE,
-    expiresAt: { $gt: new Date() },
+    startsAt: { $lte: now },
+    expiresAt: { $gt: now },
   });
   return Boolean(active);
 };
@@ -67,14 +72,6 @@ const isEnrolledUser = async (userId) => {
 /**
  * Check whether the user has quota remaining for today, and if so atomically
  * consume one credit.
- *
- * Idempotency notes:
- *  - The read (current count) and the write ($inc) are two separate operations.
- *    This is safe because the pre-increment read only gates the write; a race
- *    that lets two concurrent requests both pass the gate will at most exceed
- *    the limit by one, which is acceptable for this use-case.
- *  - For strict hard limits, callers can treat `remaining === 0` in the
- *    returned object as "blocked" regardless of the `allowed` flag.
  *
  * @param {string|mongoose.Types.ObjectId} userId
  * @returns {Promise<{
@@ -91,25 +88,80 @@ export const checkAndConsumeQuota = async (userId) => {
   const dateKey = getTodayUTC();
   const resetsAt = getEndOfDayUTC();
 
-  // Read current count without modifying
   const existing = await DailyAiUsage.findOne({ userId, dateKey });
-  const currentCount = existing?.count ?? 0;
-
-  if (currentCount >= limit) {
-    return { allowed: false, remaining: 0, limit, count: currentCount, resetsAt };
+  if (existing && existing.count >= limit) {
+    return {
+      allowed: false,
+      remaining: 0,
+      limit,
+      count: existing.count,
+      resetsAt,
+    };
   }
 
-  // Atomically increment
+  // The count predicate is part of the atomic update. This prevents
+  // concurrent requests from consuming more than the daily limit.
   const updated = await DailyAiUsage.findOneAndUpdate(
-    { userId, dateKey },
+    { userId, dateKey, count: { $lt: limit } },
     { $inc: { count: 1 } },
-    { upsert: true, new: true, returnDocument: "after" }
+    { new: true, returnDocument: "after" }
   );
 
-  const newCount = updated.count;
-  const remaining = Math.max(0, limit - newCount);
+  if (updated) {
+    const count = updated.count;
+    return {
+      allowed: true,
+      remaining: Math.max(0, limit - count),
+      limit,
+      count,
+      resetsAt,
+    };
+  }
 
-  return { allowed: true, remaining, limit, count: newCount, resetsAt };
+  // No row means this is the first query of the day. Creating the initial
+  // row is separate because an upsert with `count: { $lt: limit }` can
+  // reinsert an exhausted row under concurrent traffic.
+  try {
+    const created = await DailyAiUsage.create({ userId, dateKey, count: 1 });
+    return {
+      allowed: true,
+      remaining: limit - 1,
+      limit,
+      count: created.count,
+      resetsAt,
+    };
+  } catch (error) {
+    if (error?.code !== 11000) {
+      throw error;
+    }
+
+    // Another request created the row first; retry the guarded increment.
+    const retried = await DailyAiUsage.findOneAndUpdate(
+      { userId, dateKey, count: { $lt: limit } },
+      { $inc: { count: 1 } },
+      { new: true, returnDocument: "after" }
+    );
+
+    if (retried) {
+      const count = retried.count;
+      return {
+        allowed: true,
+        remaining: Math.max(0, limit - count),
+        limit,
+        count,
+        resetsAt,
+      };
+    }
+
+    const exhausted = await DailyAiUsage.findOne({ userId, dateKey });
+    return {
+      allowed: false,
+      remaining: 0,
+      limit,
+      count: exhausted?.count ?? limit,
+      resetsAt,
+    };
+  }
 };
 
 /**

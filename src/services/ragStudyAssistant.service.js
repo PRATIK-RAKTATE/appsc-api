@@ -7,20 +7,22 @@
  *   1. Academic guardrail check
  *   2. Vector search against internal knowledge base
  *   3. Route decision: internal (score ≥ 0.65) vs. web fallback (score < 0.65)
- *   4. Quota check before any paid web search
+ *   4. Web fallback (request quota is enforced by middleware)
  *   5. Build context-aware LLM prompt
  *   6. Call OpenRouter LLM and return structured response
  *
  * Source labels:
  *   INTERNAL_BOOKS — answered from internal vector knowledge base
  *   WEB_SEARCH     — answered using Tavily web search results
- *   GENERAL_LLM    — answered from model general knowledge (fallback when
- *                    web is unavailable / quota exceeded)
+ *   GENERAL_LLM    — answered from model general knowledge when web search
+ *                    is unavailable
  */
 
-import { validateAcademicPrompt } from "../utils/academicGuardrail.js";
+import {
+  ACADEMIC_SYSTEM_GUARDRAIL_PROMPT,
+  validateAcademicPrompt,
+} from "../utils/academicGuardrail.js";
 import { retrieveSimilarChunks } from "./vectorRetrieval.service.js";
-import { checkAndIncrementWebQuota } from "./aiQuota.service.js";
 import { performWebSearch } from "./webSearch.service.js";
 import { openRouterConfig } from "../config/openrouter.js";
 
@@ -92,20 +94,26 @@ const callLLM = async (messages) => {
 // Prompt builders
 // ---------------------------------------------------------------------------
 
-const SYSTEM_PROMPT_INTERNAL = `You are an expert AI Study Assistant specialised in Indian competitive exam preparation (UPSC, APPSC, SSC, IBPS, etc.).
+const SYSTEM_PROMPT_INTERNAL = `${ACADEMIC_SYSTEM_GUARDRAIL_PROMPT}
+
+You are answering from internal study material.
 Answer the student's question clearly and accurately using ONLY the context provided from the textbook/study material.
 - Be concise but thorough.
 - Use bullet points or numbered lists where helpful.
 - If the context is insufficient, say so explicitly rather than guessing.
 - Do NOT invent facts not present in the context.`;
 
-const SYSTEM_PROMPT_WEB = `You are an expert AI Study Assistant specialised in Indian competitive exam preparation.
+const SYSTEM_PROMPT_WEB = `${ACADEMIC_SYSTEM_GUARDRAIL_PROMPT}
+
+You are answering from verified web snippets.
 Use the following verified web snippets to answer the competitive exam question.
 - Synthesise information from the snippets into a clear, exam-focused answer.
 - Always cite the reference URLs at the bottom of your answer under a "References:" section.
 - Do NOT fabricate information beyond what the snippets contain.`;
 
-const SYSTEM_PROMPT_GENERAL = `You are an expert AI Study Assistant specialised in Indian competitive exam preparation (UPSC, APPSC, SSC, IBPS, etc.).
+const SYSTEM_PROMPT_GENERAL = `${ACADEMIC_SYSTEM_GUARDRAIL_PROMPT}
+
+You are answering from general knowledge.
 Answer the student's question using your general training knowledge.
 - Note at the start: "Based on general knowledge (internal books did not cover this topic):"
 - Be factual and exam-relevant.
@@ -227,41 +235,10 @@ export const queryStudyAssistant = async ({ query, userId }) => {
 
   // ---- Low-confidence / missing data — consider web fallback ----
 
+  // The request-level quota is consumed by aiGuard.middleware before this
+  // service runs, so web fallback must not consume a second credit.
   // -------------------------------------------------------------------------
-  // Step 4: Quota check before web search
-  // -------------------------------------------------------------------------
-  const quotaResult = await checkAndIncrementWebQuota(userId);
-
-  if (!quotaResult.allowed) {
-    // Quota exceeded — fall back to general LLM with disclaimer
-    const messages = [
-      { role: "system", content: SYSTEM_PROMPT_GENERAL },
-      { role: "user", content: query },
-    ];
-
-    let answer;
-    try {
-      answer = await callLLM(messages);
-    } catch (err) {
-      console.error("[ragStudyAssistant] LLM error (quota-exceeded path):", err.message);
-      answer =
-        "The internal study material does not cover this topic and your daily web search quota has been reached. " +
-        `You have used all ${quotaResult.limit} web searches for today. Please try again tomorrow.`;
-    }
-
-    return {
-      answer,
-      source: "GENERAL_LLM",
-      references: [],
-      remainingQuota: 0,
-      quotaLimit: quotaResult.limit,
-      blocked: false,
-      blockReason: "QUOTA_EXCEEDED",
-    };
-  }
-
-  // -------------------------------------------------------------------------
-  // Step 5: Web search fallback
+  // Step 4: Web search fallback
   // -------------------------------------------------------------------------
   let webResults = [];
   try {
@@ -292,8 +269,8 @@ export const queryStudyAssistant = async ({ query, userId }) => {
       answer,
       source: "GENERAL_LLM",
       references: [],
-      remainingQuota: quotaResult.remaining,
-      quotaLimit: quotaResult.limit,
+      remainingQuota: null,
+      quotaLimit: null,
       blocked: false,
       blockReason: null,
     };
@@ -327,8 +304,8 @@ export const queryStudyAssistant = async ({ query, userId }) => {
     answer,
     source: "WEB_SEARCH",
     references: webResults.map((r) => ({ title: r.title, url: r.url })),
-    remainingQuota: quotaResult.remaining,
-    quotaLimit: quotaResult.limit,
+    remainingQuota: null,
+    quotaLimit: null,
     blocked: false,
     blockReason: null,
   };

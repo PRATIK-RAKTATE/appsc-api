@@ -1,33 +1,30 @@
 import { getRemainingQuota } from "../services/aiQuota.service.js";
+import { queryStudyAssistant } from "../services/ragStudyAssistant.service.js";
 
 /**
  * POST /api/ai/assistant
  *
- * Placeholder study-assistant handler.
- * The full RAG + OpenRouter pipeline is implemented in TASK-05.3.1.
  * This controller receives control only after checkAiQuotaAndGuardrails
- * middleware has already validated the prompt and consumed one quota credit.
+ * has validated the prompt and consumed one quota credit.
  *
  * req.aiQuota is populated by the middleware.
  */
 export const studyAssistantController = async (req, res) => {
   try {
     const { query } = req.body;
-    const { remaining, limit, resetsAt } = req.aiQuota;
+    const result = await queryStudyAssistant({
+      query,
+      userId: req.user.userId,
+    });
 
-    // The actual RAG/LLM pipeline would be invoked here.
-    // For this ticket scope we echo the query back so the middleware tests
-    // can verify end-to-end plumbing without a live OpenRouter key.
     return res.status(200).json({
       success: true,
       data: {
         query,
-        answer: null, // populated by ragStudyAssistant.service in TASK-05.3.1
-        source: null,
-        references: [],
-        remainingQuota: remaining,
-        quotaLimit: limit,
-        resetsAt,
+        ...result,
+        remainingQuota: req.aiQuota.remaining,
+        quotaLimit: req.aiQuota.limit,
+        resetsAt: req.aiQuota.resetsAt,
       },
     });
   } catch (error) {

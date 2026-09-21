@@ -34,6 +34,14 @@ export const checkAiQuotaAndGuardrails = async (req, res, next) => {
   }
 
   // --- 2. Quota check ---
+  if (!userId) {
+    return res.status(401).json({
+      success: false,
+      message: "Authentication required",
+      code: "AUTHENTICATION_REQUIRED",
+    });
+  }
+
   const quotaResult = await checkAndConsumeQuota(userId);
 
   if (!quotaResult.allowed) {
