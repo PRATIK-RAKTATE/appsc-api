@@ -3,7 +3,8 @@ import {
   autosaveAnswer, 
   submitExam, 
   getExamReview, 
-  getExamAnalytics 
+  getExamAnalytics,
+  getLeaderboard,
 } from "../services/exam.service.js";
 
 export const startExamController = async (req, res) => {
@@ -102,6 +103,26 @@ export const getAnalyticsController = async (req, res) => {
     return res.status(200).json(analytics);
   } catch (error) {
     return res.status(error.message.includes("submission") ? 403 : 400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+/**
+ * GET /api/exams/:testId/leaderboard
+ * Returns the most recent hourly leaderboard snapshot for a test.
+ */
+export const getLeaderboardController = async (req, res) => {
+  try {
+    const { testId } = req.params;
+    const limit = parseInt(req.query.limit, 10) || 50;
+
+    const result = await getLeaderboard(testId, limit);
+
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(400).json({
       success: false,
       message: error.message,
     });

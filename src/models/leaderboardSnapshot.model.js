@@ -15,7 +15,6 @@ const leaderboardEntrySchema = new Schema(
     score: {
       type: Number,
       required: true,
-      min: 0,
     },
   },
   { _id: false }

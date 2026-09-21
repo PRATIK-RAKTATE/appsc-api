@@ -4,6 +4,7 @@ import "./workers/readingProgress.worker.js";
 import "./workers/currentAffairsRag.worker.js";
 import { startMongoDBBackupJob } from "./jobs/mongodbBackup.job.js";
 import { scheduleExpiryCron } from "./jobs/expiryCron.js";
+import { scheduleLeaderboardCron } from "./jobs/leaderboardCron.js";
 
 import app from "./app.js";
 import connectDB from "./config/db.js";
@@ -16,6 +17,7 @@ const PORT = process.env.PORT || 5000;
 
 startMongoDBBackupJob();
 scheduleExpiryCron();
+scheduleLeaderboardCron();
 
 const startServer = async () => {
   try {

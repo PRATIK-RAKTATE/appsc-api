@@ -141,15 +141,14 @@ describe("TestSubmission Schema", () => {
     expect(error.errors.status).toBeDefined();
   });
 
-  it("should reject negative score", () => {
+  it("should allow negative total score (negative marking may produce net-negative totals)", () => {
     const submission = new TestSubmission({
       ...validSubmission,
       score: -10,
     });
 
-    const error = submission.validateSync();
-
-    expect(error.errors.score).toBeDefined();
+    // No validation error — negative total is valid when penalties exceed correct marks
+    expect(submission.validateSync()).toBeUndefined();
   });
 
   it("should default submission status to IN_PROGRESS", () => {

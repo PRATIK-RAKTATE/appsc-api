@@ -127,7 +127,7 @@ describe("LeaderboardSnapshot Schema", () => {
     expect(error.errors["rankings.0.score"]).toBeDefined();
   });
 
-  it("should reject negative score in rankings", () => {
+  it("should allow negative score in rankings (negative marking may produce net-negative totals)", () => {
     const snapshot = new LeaderboardSnapshot({
       ...validSnapshot,
       rankings: [
@@ -139,8 +139,6 @@ describe("LeaderboardSnapshot Schema", () => {
       ],
     });
 
-    const error = snapshot.validateSync();
-
-    expect(error.errors["rankings.0.score"]).toBeDefined();
+    expect(snapshot.validateSync()).toBeUndefined();
   });
 });

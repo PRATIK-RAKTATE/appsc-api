@@ -19,9 +19,7 @@ const answerSchema = new Schema(
       required: true,
     },
     selectedOption: {
-      type: Number,
-      min: 0,
-      max: 3,
+      type: Schema.Types.Mixed,
       default: null,
     },
     status: {
@@ -64,7 +62,6 @@ const testSubmissionSchema = new Schema(
       type: Number,
       required: true,
       default: 0,
-      min: 0,
     },
     correctCount: {
       type: Number,
