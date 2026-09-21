@@ -131,6 +131,50 @@ const currentAffairsSchema = new Schema(
       default: null,
     },
 
+    ragStatus: {
+      type: String,
+      enum: Object.values(RAG_STATUS),
+      default: null,
+      index: true,
+    },
+
+    ragIndexedAt: {
+      type: Date,
+      default: null,
+    },
+
+    semanticLinkStatus: {
+      type: String,
+      enum: Object.values(RAG_STATUS),
+      default: null,
+      index: true,
+    },
+
+    semanticLinkIndexedAt: {
+      type: Date,
+      default: null,
+    },
+
+    relatedChapters: {
+      type: [
+        {
+          chapterId: {
+            type: Schema.Types.ObjectId,
+            ref: "Chapter",
+            required: true,
+          },
+          score: {
+            type: Number,
+            required: true,
+            min: 0,
+            max: 1,
+          },
+          _id: false,
+        },
+      ],
+      default: [],
+    },
+
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: "User",
