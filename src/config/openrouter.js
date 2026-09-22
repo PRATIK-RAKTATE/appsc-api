@@ -6,4 +6,7 @@ export const openRouterConfig = {
   embeddingModel:
     process.env.OPENROUTER_EMBEDDING_MODEL ||
     "google/gemini-embedding-001",
+  chatModel:
+    process.env.OPENROUTER_CHAT_MODEL ||
+    "meta-llama/llama-3.2-3b-instruct:free",
 };
