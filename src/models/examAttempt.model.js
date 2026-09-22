@@ -56,6 +56,43 @@ const examAttemptSchema = new Schema(
       default: null,
     },
     responses: [responseSchema],
+
+    // Scoring fields — populated by the scoring engine on submission
+    score: {
+      type: Number,
+      default: 0,
+      index: true,
+    },
+
+    totalMarks: {
+      type: Number,
+      default: 0,
+    },
+
+    correctCount: {
+      type: Number,
+      default: 0,
+    },
+
+    incorrectCount: {
+      type: Number,
+      default: 0,
+    },
+
+    unattemptedCount: {
+      type: Number,
+      default: 0,
+    },
+
+    accuracy: {
+      type: Number,
+      default: 0,
+    },
+
+    totalTimeSeconds: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,
