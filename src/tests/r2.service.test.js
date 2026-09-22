@@ -31,6 +31,9 @@ const {
   deleteFileFromR2,
   getFileUrl,
   R2_SIGNED_URL_EXPIRY_SECONDS,
+  generateChatMediaPresignedUploadUrl,
+  CHAT_MEDIA_TYPE,
+  CHAT_MEDIA_MAX_SIZE_BYTES,
 } = await import("../services/r2.service.js");
 const {
   PutObjectCommand,
@@ -157,6 +160,148 @@ describe("R2 Service", () => {
 
     it("returns empty string when key is empty", () => {
       expect(getFileUrl("")).toBe("");
+    });
+  });
+
+  describe("generateChatMediaPresignedUploadUrl", () => {
+    it("generates presigned URL for image under chat-media/image prefix", async () => {
+      const result = await generateChatMediaPresignedUploadUrl({
+        fileName: "photo.jpg",
+        contentType: "image/jpeg",
+        size: 1024 * 1024,
+        mediaType: CHAT_MEDIA_TYPE.IMAGE,
+      });
+
+      expect(result.uploadUrl).toBe("https://signed-url.example.com/upload");
+      expect(result.key).toMatch(/^chat-media\/image\//);
+      expect(result.contentType).toBe("image/jpeg");
+      expect(result.mediaType).toBe("IMAGE");
+      expect(result.maxSize).toBe(CHAT_MEDIA_MAX_SIZE_BYTES[CHAT_MEDIA_TYPE.IMAGE]);
+    });
+
+    it("generates presigned URL for PDF under chat-media/pdf prefix", async () => {
+      const result = await generateChatMediaPresignedUploadUrl({
+        fileName: "notes.pdf",
+        contentType: "application/pdf",
+        size: 5 * 1024 * 1024,
+        mediaType: CHAT_MEDIA_TYPE.PDF,
+      });
+
+      expect(result.key).toMatch(/^chat-media\/pdf\//);
+      expect(result.mediaType).toBe("PDF");
+      expect(result.maxSize).toBe(CHAT_MEDIA_MAX_SIZE_BYTES[CHAT_MEDIA_TYPE.PDF]);
+    });
+
+    it("generates presigned URL for voice note under chat-media/voice prefix", async () => {
+      const result = await generateChatMediaPresignedUploadUrl({
+        fileName: "note.mp3",
+        contentType: "audio/mpeg",
+        size: 2 * 1024 * 1024,
+        mediaType: CHAT_MEDIA_TYPE.VOICE,
+      });
+
+      expect(result.key).toMatch(/^chat-media\/voice\//);
+      expect(result.mediaType).toBe("VOICE");
+      expect(result.maxSize).toBe(CHAT_MEDIA_MAX_SIZE_BYTES[CHAT_MEDIA_TYPE.VOICE]);
+    });
+
+    it("throws for invalid mediaType", async () => {
+      await expect(
+        generateChatMediaPresignedUploadUrl({
+          fileName: "file.txt",
+          contentType: "text/plain",
+          size: 100,
+          mediaType: "VIDEO",
+        })
+      ).rejects.toThrow("Invalid mediaType");
+    });
+
+    it("throws for invalid contentType for IMAGE", async () => {
+      await expect(
+        generateChatMediaPresignedUploadUrl({
+          fileName: "file.txt",
+          contentType: "text/plain",
+          size: 100,
+          mediaType: CHAT_MEDIA_TYPE.IMAGE,
+        })
+      ).rejects.toThrow("Invalid contentType for IMAGE");
+    });
+
+    it("throws for invalid contentType for PDF", async () => {
+      await expect(
+        generateChatMediaPresignedUploadUrl({
+          fileName: "file.jpg",
+          contentType: "image/jpeg",
+          size: 100,
+          mediaType: CHAT_MEDIA_TYPE.PDF,
+        })
+      ).rejects.toThrow("Invalid contentType for PDF");
+    });
+
+    it("throws for invalid contentType for VOICE", async () => {
+      await expect(
+        generateChatMediaPresignedUploadUrl({
+          fileName: "file.mp3",
+          contentType: "audio/mpeg",
+          size: 100,
+          mediaType: CHAT_MEDIA_TYPE.IMAGE,
+        })
+      ).rejects.toThrow("Invalid contentType for IMAGE");
+    });
+
+    it("throws when image exceeds 5MB", async () => {
+      await expect(
+        generateChatMediaPresignedUploadUrl({
+          fileName: "big.jpg",
+          contentType: "image/jpeg",
+          size: 6 * 1024 * 1024,
+          mediaType: CHAT_MEDIA_TYPE.IMAGE,
+        })
+      ).rejects.toThrow("File size exceeds limit for IMAGE");
+    });
+
+    it("throws when PDF exceeds 10MB", async () => {
+      await expect(
+        generateChatMediaPresignedUploadUrl({
+          fileName: "big.pdf",
+          contentType: "application/pdf",
+          size: 11 * 1024 * 1024,
+          mediaType: CHAT_MEDIA_TYPE.PDF,
+        })
+      ).rejects.toThrow("File size exceeds limit for PDF");
+    });
+
+    it("throws when voice note exceeds 5MB", async () => {
+      await expect(
+        generateChatMediaPresignedUploadUrl({
+          fileName: "big.mp3",
+          contentType: "audio/mpeg",
+          size: 6 * 1024 * 1024,
+          mediaType: CHAT_MEDIA_TYPE.VOICE,
+        })
+      ).rejects.toThrow("File size exceeds limit for VOICE");
+    });
+
+    it("throws for non-positive size", async () => {
+      await expect(
+        generateChatMediaPresignedUploadUrl({
+          fileName: "file.jpg",
+          contentType: "image/jpeg",
+          size: 0,
+          mediaType: CHAT_MEDIA_TYPE.IMAGE,
+        })
+      ).rejects.toThrow("File size must be a positive number");
+    });
+
+    it("throws for empty fileName after trim", async () => {
+      await expect(
+        generateChatMediaPresignedUploadUrl({
+          fileName: "   ",
+          contentType: "image/jpeg",
+          size: 100,
+          mediaType: CHAT_MEDIA_TYPE.IMAGE,
+        })
+      ).rejects.toThrow("fileName is required");
     });
   });
 });

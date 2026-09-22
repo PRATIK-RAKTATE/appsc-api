@@ -165,3 +165,95 @@ export const getFileUrl = (key) => {
   const bucket = process.env.R2_BUCKET_NAME || R2_BUCKET_NAME || "";
   return `${endpoint}/${bucket}/${key}`;
 };
+
+export const CHAT_MEDIA_TYPE = {
+  IMAGE: "IMAGE",
+  PDF: "PDF",
+  VOICE: "VOICE",
+};
+
+export const CHAT_MEDIA_ALLOWED_MIME_TYPES = {
+  [CHAT_MEDIA_TYPE.IMAGE]: new Set([
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    "image/webp",
+    "image/bmp",
+    "image/tiff",
+    "image/svg+xml",
+  ]),
+  [CHAT_MEDIA_TYPE.PDF]: new Set(["application/pdf"]),
+  [CHAT_MEDIA_TYPE.VOICE]: new Set([
+    "audio/mpeg",
+    "audio/wav",
+    "audio/ogg",
+    "audio/webm",
+    "audio/mp4",
+    "audio/aac",
+    "audio/flac",
+    "audio/x-m4a",
+  ]),
+};
+
+export const CHAT_MEDIA_MAX_SIZE_BYTES = {
+  [CHAT_MEDIA_TYPE.IMAGE]: 5 * 1024 * 1024,
+  [CHAT_MEDIA_TYPE.PDF]: 10 * 1024 * 1024,
+  [CHAT_MEDIA_TYPE.VOICE]: 5 * 1024 * 1024,
+};
+
+export const generateChatMediaPresignedUploadUrl = async ({
+  fileName,
+  contentType,
+  size,
+  mediaType,
+}) => {
+  const bucket = process.env.R2_BUCKET_NAME || R2_BUCKET_NAME;
+  if (!bucket) {
+    throw new Error("R2_BUCKET_NAME is not configured");
+  }
+
+  if (!mediaType || !Object.values(CHAT_MEDIA_TYPE).includes(mediaType)) {
+    throw new Error("Invalid mediaType. Allowed: IMAGE, PDF, VOICE");
+  }
+
+  const trimmedContentType = typeof contentType === "string" ? contentType.trim() : "";
+  const allowedMimes = CHAT_MEDIA_ALLOWED_MIME_TYPES[mediaType];
+  if (!trimmedContentType || !allowedMimes.has(trimmedContentType.toLowerCase())) {
+    throw new Error(
+      `Invalid contentType for ${mediaType}. Allowed: ${Array.from(allowedMimes).join(", ")}`
+    );
+  }
+
+  const maxSize = CHAT_MEDIA_MAX_SIZE_BYTES[mediaType];
+  if (typeof size !== "number" || size <= 0 || !Number.isFinite(size)) {
+    throw new Error("File size must be a positive number");
+  }
+  if (size > maxSize) {
+    throw new Error(
+      `File size exceeds limit for ${mediaType}. Max allowed: ${maxSize} bytes`
+    );
+  }
+
+  const rawName = typeof fileName === "string" ? fileName.trim() : "";
+  if (!rawName) {
+    throw new Error("fileName is required");
+  }
+
+  const cleanName = rawName.replace(/[^a-zA-Z0-9_.-]/g, "_").substring(0, 100);
+  const uniqueId = `${Date.now()}-${Math.random().toString(36).substring(2, 10)}`;
+  const key = `chat-media/${mediaType.toLowerCase()}/${uniqueId}-${cleanName}`;
+
+  const uploadUrl = await generatePresignedUploadUrl({
+    key,
+    contentType: trimmedContentType,
+  });
+
+  return {
+    uploadUrl,
+    key,
+    contentType: trimmedContentType,
+    expiresIn: R2_SIGNED_URL_EXPIRY_SECONDS,
+    maxSize,
+    mediaType,
+  };
+};

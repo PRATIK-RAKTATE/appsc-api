@@ -6,6 +6,7 @@ import {
   getThreadMessagesController,
   getUnreadCountController,
 } from "../controllers/chat.controller.js";
+import { getChatMediaPresignedUploadController } from "../controllers/chatMedia.controller.js";
 import { verifyToken } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
@@ -20,6 +21,11 @@ router.get("/unread-count", getUnreadCountController);
 
 router.post("/reports", reportMessage);
 router.post("/messages/:messageId/report", reportMessage);
+
+router.post(
+  "/media/presigned-upload",
+  getChatMediaPresignedUploadController
+);
 
 export default router;
 

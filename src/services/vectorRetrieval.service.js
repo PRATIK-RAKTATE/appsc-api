@@ -148,6 +148,7 @@ export const retrieveSimilarChunks = async ({
     chunkId: doc._id.toString(),
     content: doc.content,
     title: doc.title,
+    bookId: doc.bookId?.toString(),
     score: doc.score,
     metadata: doc.metadata ?? {},
   }));
