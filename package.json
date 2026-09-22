@@ -27,9 +27,10 @@
   },
   "scripts": {
     "test": "vitest run",
+    "check:boundaries": "node scripts/check-module-boundaries.mjs",
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "backup:mongodb": "node src/scripts/mongodbBackup.js"
+    "backup:mongodb": "node src/shared/infrastructure/backup/scripts/mongodbBackup.js"
   },
   "repository": {
     "type": "git",

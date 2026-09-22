@@ -10,12 +10,12 @@ import {
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
 
-import { User, USER_ROLES } from "../../src/models/user.model.js";
-import { MentorProfile, MENTOR_STATUS } from "../../src/models/mentorProfile.model.js";
-import { StudentMentorThread, MENTOR_THREAD_STATUS } from "../../src/models/studentMentorThread.model.js";
+import { User, USER_ROLES } from "../../src/modules/users/models/user.model.js";
+import { MentorProfile, MENTOR_STATUS } from "../../src/modules/mentors/models/mentorProfile.model.js";
+import { StudentMentorThread, MENTOR_THREAD_STATUS } from "../../src/modules/mentors/models/studentMentorThread.model.js";
 
-import * as mentorController from "../../src/controllers/mentor.controller.js";
-import * as adminMentorController from "../../src/controllers/adminMentor.controller.js";
+import * as mentorController from "../../src/modules/mentors/controllers/mentor.controller.js";
+import * as adminMentorController from "../../src/modules/mentors/controllers/adminMentor.controller.js";
 
 // ──────────────────────────────────────────────────────────────
 // Test infrastructure

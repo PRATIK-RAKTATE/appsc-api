@@ -1,29 +1,33 @@
 import express from "express";
-import authRoutes from "./routes/auth.routes.js";
-import bookRoutes from "./routes/book.routes.js";
-import subjectRoutes from "./routes/subject.routes.js";
-import topicRoutes from "./routes/topic.routes.js";
-import subTopicRoutes from "./routes/subTopic.routes.js";
-import questionRoutes from "./routes/question.routes.js";
-import platformSettingRoutes from "./routes/platformSetting.routes.js";
-
-import testRoutes from "./routes/test.routes.js";
-import currentAffairsRoutes from "./routes/currentAffairs.routes.js";
-import videoRoutes from "./routes/video.routes.js";
-import paymentRoutes from "./routes/payment.routes.js";
-import { razorpayWebhookController } from "./controllers/payment.controller.js";
-import adminCourseRoutes from "./routes/adminCourse.routes.js";
-import adminUserRoutes from "./routes/adminUser.routes.js";
-import adminCurrentAffairsRoutes from "./routes/adminCurrentAffairs.routes.js";
-import annotationRoutes from "./routes/annotation.routes.js";
-import examRoutes from "./routes/exam.routes.js";
-import aiRoutes from "./routes/ai.routes.js";
-import currentAffairsBookmarkRoutes from "./routes/currentAffairsBookmark.routes.js";
-import aiSettingRoutes from "./routes/aiSetting.routes.js";
-import chatRoutes from "./routes/chat.routes.js";
-import adminChatRoutes from "./routes/adminChat.routes.js";
-import mentorRoutes from "./routes/mentor.routes.js";
-import adminMentorRoutes from "./routes/adminMentor.routes.js";
+import { authRoutes } from "./modules/auth/routes/index.js";
+import { bookRoutes } from "./modules/books/routes/index.js";
+import {
+  questionRoutes,
+  subjectRoutes,
+  subTopicRoutes,
+  topicRoutes,
+} from "./modules/question-bank/routes/index.js";
+import {
+  aiSettingRoutes,
+  platformSettingRoutes,
+} from "./modules/platform-settings/routes/index.js";
+import { examRoutes, testRoutes } from "./modules/exams/routes/index.js";
+import {
+  adminCurrentAffairsRoutes,
+  currentAffairsBookmarkRoutes,
+  currentAffairsRoutes,
+} from "./modules/current-affairs/routes/index.js";
+import { videoRoutes } from "./modules/videos/routes/index.js";
+import {
+  paymentRoutes,
+  razorpayWebhookController,
+} from "./modules/payments/routes/index.js";
+import { adminCourseRoutes } from "./modules/courses/routes/index.js";
+import { adminUserRoutes } from "./modules/users/routes/index.js";
+import { annotationRoutes } from "./modules/annotations/routes/index.js";
+import { aiRoutes } from "./modules/ai-assistant/routes/index.js";
+import { adminChatRoutes, chatRoutes } from "./modules/chat/routes/index.js";
+import { adminMentorRoutes, mentorRoutes } from "./modules/mentors/routes/index.js";
 
 const app = express();
 

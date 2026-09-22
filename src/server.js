@@ -1,15 +1,15 @@
 import "./config/env.js";
-import "./workers/knowledgeChunk.worker.js";
-import "./workers/readingProgress.worker.js";
-import "./workers/currentAffairsRag.worker.js";
-import { startMongoDBBackupJob } from "./jobs/mongodbBackup.job.js";
-import { scheduleExpiryCron } from "./jobs/expiryCron.js";
+import "./modules/books/workers/knowledgeChunk.worker.js";
+import "./modules/books/workers/readingProgress.worker.js";
+import "./modules/current-affairs/workers/currentAffairsRag.worker.js";
+import { startMongoDBBackupJob } from "./shared/infrastructure/backup/jobs/mongodbBackup.job.js";
+import { scheduleExpiryCron } from "./modules/entitlements/index.js";
 
 import app from "./app.js";
 import connectDB from "./config/db.js";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import { registerSocketHandlers } from "./services/socket.service.js";
+import { registerSocketHandlers } from "./modules/chat/index.js";
 
 
 const PORT = process.env.PORT || 5000;

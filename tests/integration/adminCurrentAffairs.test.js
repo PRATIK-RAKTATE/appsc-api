@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach, vi } from "vitest";
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
-import { CurrentAffairs, CURRENT_AFFAIRS_STATUS } from "../../src/models/currentAffairs.model.js";
-import { Category } from "../../src/models/category.model.js";
-import { User } from "../../src/models/user.model.js";
-import { scheduleCurrentAffairsRagIngestion } from "../../src/queues/currentAffairsRag.queue.js";
-import * as controllers from "../../src/controllers/currentAffairs.controller.js";
+import { CurrentAffairs, CURRENT_AFFAIRS_STATUS } from "../../src/modules/current-affairs/models/currentAffairs.model.js";
+import { Category } from "../../src/modules/current-affairs/models/category.model.js";
+import { User } from "../../src/modules/users/models/user.model.js";
+import { scheduleCurrentAffairsRagIngestion } from "../../src/modules/current-affairs/queues/currentAffairsRag.queue.js";
+import * as controllers from "../../src/modules/current-affairs/controllers/currentAffairs.controller.js";
 
-vi.mock("../../src/queues/currentAffairsRag.queue.js", () => ({
+vi.mock("../../src/modules/current-affairs/queues/currentAffairsRag.queue.js", () => ({
   scheduleCurrentAffairsRagIngestion: vi.fn(),
 }));
 
