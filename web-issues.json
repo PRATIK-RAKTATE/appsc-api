@@ -1,0 +1,450 @@
+[
+  {
+    "body": "### Module & Feature\n- **Module**: Admin Governance, Platform Settings & DevOps\n- **Feature**: Audit Logging System\n- **Estimate**: 3h\n- **Dependencies**: TASK-08.2.2\n\n### User Story Context\n> As a Admin, I want to have an immutable audit log of administrative actions so that changes to content, users, and financials can be traced and audited\n\n### Acceptance Criteria\n- [ ] Middleware recording admin actor, action, timestamp, and changes\n- [ ] Filterable audit log viewer in Admin portal\n\n---\n\n### Task Description & Deliverables\nAdmin log explorer displaying timestamps, actors, event descriptions, and delta inspector.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 109,
+    "title": "[TASK-08.2.3] [Web] Build Admin Audit Logs Viewer in React.js",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/109"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Admin Governance, Platform Settings & DevOps\n- **Feature**: Student & Mentor Management Directory\n- **Estimate**: 4h\n- **Dependencies**: TASK-08.1.1\n\n### User Story Context\n> As a Admin, I want to search and manage all students and mentors, inspect details, and terminate sessions so that I can govern platform users effectively\n\n### Acceptance Criteria\n- [ ] User directory with search and role filters\n- [ ] User detail drawer showing test scores and active session status\n- [ ] One-click account suspension and force session termination\n\n---\n\n### Task Description & Deliverables\nData table with search, role filters, user inspector modal, and session termination buttons.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 106,
+    "title": "[TASK-08.1.2] [Web] Build Admin User Directory and User Inspector UI in React.js",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/106"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Courses, Cloudflare R2 Video & Razorpay Payments\n- **Feature**: Invoicing, Coupons & Refund Management\n- **Estimate**: 5h\n- **Dependencies**: TASK-07.5.2\n\n### User Story Context\n> As a Student/Admin, I want to generate GST invoices, apply discount coupons, and process refunds so that commercial transactions are transparent and compliant\n\n### Acceptance Criteria\n- [ ] Automated PDF invoice generation\n- [ ] Coupon discount engine (percentage or flat discount)\n- [ ] Admin refund workflow via Razorpay refund API\n\n---\n\n### Task Description & Deliverables\nCheckout coupon widget, student invoice download buttons, and Admin financial manager.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 103,
+    "title": "[TASK-07.5.3] [Web] Build coupon input at checkout, invoice downloads, and Admin Refund UI in React.js",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/103"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Courses, Cloudflare R2 Video & Razorpay Payments\n- **Feature**: Validity-Based Entitlement & Post-Expiry Handling\n- **Estimate**: 4h\n- **Dependencies**: TASK-07.4.2\n\n### User Story Context\n> As a Student, I want to have course access active for the validity period while retaining read-only access to past scores so that my historical study records remain available after course expiration\n\n### Acceptance Criteria\n- [ ] On payment verification, create record in user_entitlements with starts_at and expires_at\n- [ ] Access guard middleware restricting active course content on expiry\n- [ ] Historical test attempts, score summaries, and past mentor chat logs remain accessible in read-only mode\n\n---\n\n### Task Description & Deliverables\nStudent dashboard showing enrolled courses, remaining validity days, and renewal alerts.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 100,
+    "title": "[TASK-07.4.3] [Web] Build Student My Enrolled Courses dashboard with validity countdown in React.js and React Native",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/100"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Courses, Cloudflare R2 Video & Razorpay Payments\n- **Feature**: Razorpay Payment Gateway & Checkout Flow\n- **Estimate**: 4h\n- **Dependencies**: TASK-07.3.2\n\n### User Story Context\n> As a Student, I want to purchase courses via Razorpay using UPI, Cards, or NetBanking so that my course is activated instantly\n\n### Acceptance Criteria\n- [ ] Order creation via Razorpay Node.js SDK\n- [ ] Web & React Native Razorpay Checkout integration\n- [ ] Server-side signature verification and webhook listener\n\n---\n\n### Task Description & Deliverables\nRazorpay modal checkout handler with success callback and error handling.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 96,
+    "title": "[TASK-07.3.3] [Web] Integrate Razorpay Standard Checkout in React.js Web",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/96"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Courses, Cloudflare R2 Video & Razorpay Payments\n- **Feature**: Cloudflare R2 Video Hosting & Player\n- **Estimate**: 4h\n- **Dependencies**: TASK-07.2.1\n\n### User Story Context\n> As a Student, I want to watch course videos hosted securely on Cloudflare R2 with playback speed controls so that I can learn smoothly at my own pace\n\n### Acceptance Criteria\n- [ ] Video storage in Cloudflare R2 with time-limited signed access URLs\n- [ ] Video player with play/pause, seek, 0.75x–2x speed controls, and auto-progress saving\n\n---\n\n### Task Description & Deliverables\nHTML5 Video player with custom controls, playback speed selector, and progress sync.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 92,
+    "title": "[TASK-07.2.2] [Web] Integrate HTML5 Video Player in React.js with speed controls and progress autosave",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/92"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Courses, Cloudflare R2 Video & Razorpay Payments\n- **Feature**: Course & Study Material Catalog Management\n- **Estimate**: 5h\n- **Dependencies**: TASK-07.1.2\n\n### User Story Context\n> As a Admin, I want to bundle videos, e-books, and test series into courses with validity and pricing so that students can purchase structured exam preparation bundles\n\n### Acceptance Criteria\n- [ ] Course builder with Title, Thumbnail, Description, Validity in Days, and Pricing\n- [ ] Bundling of books, tests, and video lectures\n\n---\n\n### Task Description & Deliverables\nCatalog grid with filters, curriculum overview, pricing card, and Enroll Now button.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 90,
+    "title": "[TASK-07.1.4] [Web] Build Student Course Catalog and Course Details screens in React.js and React Native",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/90"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Courses, Cloudflare R2 Video & Razorpay Payments\n- **Feature**: Course & Study Material Catalog Management\n- **Estimate**: 5h\n- **Dependencies**: TASK-07.1.2\n\n### User Story Context\n> As a Admin, I want to bundle videos, e-books, and test series into courses with validity and pricing so that students can purchase structured exam preparation bundles\n\n### Acceptance Criteria\n- [ ] Course builder with Title, Thumbnail, Description, Validity in Days, and Pricing\n- [ ] Bundling of books, tests, and video lectures\n\n---\n\n### Task Description & Deliverables\nAdmin UI to bundle videos, tests, and books into courses with validity and pricing inputs.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 89,
+    "title": "[TASK-07.1.3] [Web] Build Admin Course Builder UI in React.js + Tailwind CSS",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/89"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Current Affairs & Semantic Linking Engine\n- **Feature**: Student Current Affairs Feed & Search\n- **Estimate**: 4h\n- **Dependencies**: TASK-06.3.1\n\n### User Story Context\n> As a Student, I want to browse, filter by category/date, search, and bookmark articles so that I can revise current affairs systematically\n\n### Acceptance Criteria\n- [ ] Filter by category and date range\n- [ ] Search across headlines and text\n- [ ] 1-click bookmark to save articles\n\n---\n\n### Task Description & Deliverables\nResponsive news feed with tab filters, search bar, and reader view with bookmark toggle.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 84,
+    "title": "[TASK-06.3.2] [Web] Build Current Affairs Feed, Filters, and Reader view in React.js",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/84"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Current Affairs & Semantic Linking Engine\n- **Feature**: Semantic Content Linking Engine\n- **Estimate**: 3h\n- **Dependencies**: TASK-06.2.1\n\n### User Story Context\n> As a Student, I want to see related textbook syllabus topics when reading current affairs so that I understand the broader exam context of current events\n\n### Acceptance Criteria\n- [ ] Backend queries vector database to attach top 3 related book chapters to newly published articles\n- [ ] Related Syllabus Concepts cards rendered below articles\n\n---\n\n### Task Description & Deliverables\nCard component rendering linked book titles and chapters with 1-click navigation to reader.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 82,
+    "title": "[TASK-06.2.2] [Web] Build Related Syllabus Concepts card component in React.js and React Native",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/82"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Current Affairs & Semantic Linking Engine\n- **Feature**: Admin Current Affairs Publishing\n- **Estimate**: 4h\n- **Dependencies**: TASK-06.1.2\n\n### User Story Context\n> As a Admin, I want to publish daily current affairs with categories and tags so that students stay updated on state and national news\n\n### Acceptance Criteria\n- [ ] Rich text article editor with categories (State AP, National, Economy, Polity)\n- [ ] Automated RAG vector ingestion upon article publishing\n\n---\n\n### Task Description & Deliverables\nRich text editor with category selectors, tag inputs, PDF uploader, and publish scheduler.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 80,
+    "title": "[TASK-06.1.3] [Web] Build Admin Current Affairs Editor & Scheduler in React.js",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/80"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Smart AI Study Assistant (OpenRouter RAG Pipeline)\n- **Feature**: Admin AI Settings & Index Controls\n- **Estimate**: 4h\n- **Dependencies**: TASK-05.4.1\n\n### User Story Context\n> As a Admin, I want to trigger re-indexing and configure AI search toggles so that the AI assistant knowledge base remains current\n\n### Acceptance Criteria\n- [ ] 1-click re-index button per book in Admin CMS\n- [ ] Admin toggle to enable/disable external web search\n\n---\n\n### Task Description & Deliverables\nAdmin UI displaying indexed chunk counts, vectorization status, and search toggle controls.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 77,
+    "title": "[TASK-05.4.2] [Web] Build Admin AI Settings & Index Status Dashboard in React.js",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/77"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Smart AI Study Assistant (OpenRouter RAG Pipeline)\n- **Feature**: OpenRouter AI Chat with Book/Page Citations\n- **Estimate**: 5h\n- **Dependencies**: TASK-05.2.1\n\n### User Story Context\n> As a Student, I want to ask questions and receive answers from OpenRouter models citing book and page numbers so that I can verify facts directly from reference literature\n\n### Acceptance Criteria\n- [ ] RAG prompt construction querying OpenRouter API (meta-llama/llama-3.2-3b-instruct:free)\n- [ ] Text-to-text streaming response via Server-Sent Events (SSE)\n- [ ] Inline citation pills linking directly to book and page references\n\n---\n\n### Task Description & Deliverables\nReact.js chat drawer with streaming text animation, LaTeX math support, and citation pills.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 71,
+    "title": "[TASK-05.2.3] [Web] Build AI Chat Drawer with markdown and streaming text in React.js + Tailwind CSS v4",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/71"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: 1-on-1 Mentor Communication Subsystem\n- **Feature**: Chat Moderation, Reporting & Audit Archival\n- **Estimate**: 4h\n- **Dependencies**: TASK-04.4.2\n\n### User Story Context\n> As a Admin, I want to review reported messages and inspect chat histories so that community standards and student safety are maintained\n\n### Acceptance Criteria\n- [ ] In-chat reporting button for students and mentors\n- [ ] Admin moderation panel showing flagged conversations\n- [ ] Searchable chat audit archive for administrators\n\n---\n\n### Task Description & Deliverables\nUser reporting modal and Admin dashboard for resolving flagged conversations.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 65,
+    "title": "[TASK-04.4.3] [Web] Build report modal and Admin Chat Moderation UI in React.js",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/65"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: 1-on-1 Mentor Communication Subsystem\n- **Feature**: Cloudflare R2 Media Attachments & Voice Notes\n- **Estimate**: 4h\n- **Dependencies**: TASK-04.3.1\n\n### User Story Context\n> As a Student/Mentor, I want to send photos, PDFs, and voice notes stored in Cloudflare R2 so that questions can be explained clearly\n\n### Acceptance Criteria\n- [ ] Direct presigned upload to Cloudflare R2 (Images <= 5MB, PDF <= 10MB, Voice Notes <= 5MB)\n- [ ] Dedicated storage bucket/prefix for chat media separate from course content\n- [ ] Native in-app audio recorder and player for voice notes\n\n---\n\n### Task Description & Deliverables\nDirect upload handler with progress bar and document viewer on Web and Mobile.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 61,
+    "title": "[TASK-04.3.2] [Web] Build in-chat image/PDF uploader and lightbox viewer in React.js and React Native",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/61"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: 1-on-1 Mentor Communication Subsystem\n- **Feature**: Real-Time 1-on-1 Chat Interface & Threads\n- **Estimate**: 5h\n- **Dependencies**: TASK-04.2.2\n\n### User Story Context\n> As a Student/Mentor, I want to exchange real-time text messages in topic threads so that doubts are resolved promptly\n\n### Acceptance Criteria\n- [ ] Real-time messaging via Socket.io with delivery/read receipts\n- [ ] Topic-linked conversation threads\n- [ ] Unread message counters\n\n---\n\n### Task Description & Deliverables\nResponsive chat interface with conversation list, message bubble feed, and unread counters.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 58,
+    "title": "[TASK-04.2.3] [Web] Build 1-on-1 Real-time Chat UI in React.js + Tailwind CSS v4",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/58"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: 1-on-1 Mentor Communication Subsystem\n- **Feature**: Mentor Approval & Student Self-Selection\n- **Estimate**: 4h\n- **Dependencies**: TASK-04.1.2\n\n### User Story Context\n> As a Student, I want to browse approved mentors and choose my mentor so that I can get guidance from an educator of my choice\n\n### Acceptance Criteria\n- [ ] Mentor onboarding and admin approval workflow\n- [ ] Student mentor directory allowing students to choose and initiate 1-on-1 threads with any approved mentor\n\n---\n\n### Task Description & Deliverables\nAdmin review portal and student mentor selection directory in React.js and React Native.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 55,
+    "title": "[TASK-04.1.3] [Web] Build Admin Mentor Approval Portal and Student Mentor Selection Directory",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/55"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Online Examination & Assessment Engine\n- **Feature**: Performance Analytics & Weak Topic Diagnosis\n- **Estimate**: 4h\n- **Dependencies**: TASK-03.5.1\n\n### User Story Context\n> As a Student, I want to analytics on time per question, accuracy, and weak topics so that I can focus my revision effectively\n\n### Acceptance Criteria\n- [ ] Question review with student answer, correct key, and bilingual explanation\n- [ ] Accuracy and time analysis: Average time on correct vs incorrect questions\n- [ ] Weak-topic diagnosis and revision recommendations\n\n---\n\n### Task Description & Deliverables\nFilterable review screen showing status badges, student answer vs key, and full explanation.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 52,
+    "title": "[TASK-03.5.4] [Web] Build Question-by-Question Solution Review UI with bilingual explanations",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/52"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Online Examination & Assessment Engine\n- **Feature**: Performance Analytics & Weak Topic Diagnosis\n- **Estimate**: 5h\n- **Dependencies**: TASK-03.5.2\n\n### User Story Context\n> As a Student, I want to analytics on time per question, accuracy, and weak topics so that I can focus my revision effectively\n\n### Acceptance Criteria\n- [ ] Question review with student answer, correct key, and bilingual explanation\n- [ ] Accuracy and time analysis: Average time on correct vs incorrect questions\n- [ ] Weak-topic diagnosis and revision recommendations\n\n---\n\n### Task Description & Deliverables\nVisual dashboard with radar charts, accuracy rings, and score trajectory graphs.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 51,
+    "title": "[TASK-03.5.3] [Web] Develop Student Analytics Dashboard in React.js and React Native",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/51"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Online Examination & Assessment Engine\n- **Feature**: Evaluation, Scoring & Hourly Leaderboards\n- **Estimate**: 4h\n- **Dependencies**: TASK-03.4.2\n\n### User Story Context\n> As a Student, I want to my test scored automatically with negative marking and view hourly updated leaderboards so that I can gauge my ranking among peers\n\n### Acceptance Criteria\n- [ ] Score calculation: Correct (+marks), Incorrect (-negative marks), Unattempted (0)\n- [ ] Leaderboards aggregated and updated once every hour via MongoDB cron job\n- [ ] Immediate scorecard display post-submission\n\n---\n\n### Task Description & Deliverables\nScorecard displaying total score, rank, percentile, and hourly leaderboard standings.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 48,
+    "title": "[TASK-03.4.3] [Web] Build Test Scorecard & Hourly Leaderboard UI in React.js and React Native",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/48"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Online Examination & Assessment Engine\n- **Feature**: Interactive Exam Player (Web & Mobile)\n- **Estimate**: 6h\n- **Dependencies**: TASK-03.3.1\n\n### User Story Context\n> As a Student, I want to take tests with a timer, question palette, and 1-click language switcher so that I can attempt exams smoothly\n\n### Acceptance Criteria\n- [ ] Countdown timer with auto-submit on expiration\n- [ ] Question Palette: Not Visited, Unanswered, Answered, Marked for Review\n- [ ] 1-click bilingual switcher (EN <-> TE) per question\n- [ ] Autosave answers periodically\n\n---\n\n### Task Description & Deliverables\nReact.js exam player with question palette, language toggle, and local state backup.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 43,
+    "title": "[TASK-03.3.2] [Web] Build Web Exam Player in React.js with palette sidebar and timer",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/43"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Online Examination & Assessment Engine\n- **Feature**: Exam Creation & Configurable Rules Engine\n- **Estimate**: 5h\n- **Dependencies**: TASK-03.2.2\n\n### User Story Context\n> As a Admin, I want to create Mock Tests, Sectional Tests, and Quizzes with custom rules so that students can practice under realistic exam conditions\n\n### Acceptance Criteria\n- [ ] Rules: Duration, Total Marks, Negative Marking, Randomize Questions/Options\n- [ ] Scheduling: On-demand or Scheduled Window (Start/End time)\n\n---\n\n### Task Description & Deliverables\nInteractive test wizard with question selection filters and negative marking inputs.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 41,
+    "title": "[TASK-03.2.3] [Web] Build Admin Test Builder UI with question selector in React.js",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/41"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Online Examination & Assessment Engine\n- **Feature**: Question Bank Management & Taxonomy\n- **Estimate**: 5h\n- **Dependencies**: TASK-03.1.3\n\n### User Story Context\n> As a Admin, I want to manage bilingual questions with subjects and topics so that I can organize structured test series\n\n### Acceptance Criteria\n- [ ] Taxonomy: Subject -> Topic -> Subtopic\n- [ ] Bilingual fields for Question, Options, and Detailed Explanations\n- [ ] Bulk CSV/JSON question import with format validation\n\n---\n\n### Task Description & Deliverables\nAdmin UI with bilingual input panes and bulk upload modal in React.js + Tailwind.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 38,
+    "title": "[TASK-03.1.4] [Web] Build Admin Question Bank UI in React.js",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/38"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Bilingual E-Book Reader & Content Digitization\n- **Feature**: In-Book Text Search\n- **Estimate**: 4h\n- **Dependencies**: TASK-02.4.1\n\n### User Story Context\n> As a Student, I want to search keywords across English and Telugu text inside books so that I can jump directly to specific topics\n\n### Acceptance Criteria\n- [ ] Full-text search across book content blocks using MongoDB text indexes\n- [ ] Search drawer displaying matching snippets and 1-click jump to block\n\n---\n\n### Task Description & Deliverables\nSearch input with result snippets and scroll-to-block click handlers.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 34,
+    "title": "[TASK-02.4.2] [Web] Build in-reader search drawer in React.js and React Native",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/34"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Bilingual E-Book Reader & Content Digitization\n- **Feature**: Study Annotations, Highlights, Notes & Bookmarks\n- **Estimate**: 5h\n- **Dependencies**: TASK-02.3.2\n\n### User Story Context\n> As a Student, I want to highlight text, write study notes, and bookmark pages so that I can revise key topics efficiently\n\n### Acceptance Criteria\n- [ ] Text selection opens annotation popover (Colors, Note, Bookmark)\n- [ ] Annotations persist to MongoDB and reload seamlessly\n- [ ] My Notes & Bookmarks drawer for jump navigation\n\n---\n\n### Task Description & Deliverables\nDOM range selection listener, highlight painter, and notes side panel in React.js.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 31,
+    "title": "[TASK-02.3.3] [Web] Build text-selection annotation popover and highlighter for Web in React",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/31"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Bilingual E-Book Reader & Content Digitization\n- **Feature**: Synchronized Bilingual E-Book Reader Interface\n- **Estimate**: 6h\n- **Dependencies**: TASK-02.2.1\n\n### User Story Context\n> As a Student, I want to read English and Telugu content with synchronized scrolling on desktop and toggle on mobile so that I can study comfortably across devices\n\n### Acceptance Criteria\n- [ ] Desktop/Tablet: Side-by-side dual pane with synchronized vertical scrolling\n- [ ] Mobile (React Native): Floating quick-toggle button (EN <-> TE) or stacked bilingual mode\n- [ ] Reader theme controls (Font size, light/dark/sepia)\n- [ ] Reading position auto-saves to MongoDB\n\n---\n\n### Task Description & Deliverables\nReact.js dual-pane reader with synchronized scroll lock and theme toggles in Tailwind CSS v4.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 26,
+    "title": "[TASK-02.2.2] [Web] Build Web Dual-Pane Bilingual Reader in React.js with synchronized scrolling",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/26"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Bilingual E-Book Reader & Content Digitization\n- **Feature**: Book Upload & Google Translate Pipeline\n- **Estimate**: 5h\n- **Dependencies**: TASK-02.1.3\n\n### User Story Context\n> As a Admin, I want to upload English books and trigger Google Translate API so that Telugu translations are automatically generated for review\n\n### Acceptance Criteria\n- [ ] Admin uploads source documents and defines metadata\n- [ ] Background worker parses text chunks and translates via Google Cloud Translation API\n- [ ] Admin review interface allows editing and approving translated chunks before publishing\n\n---\n\n### Task Description & Deliverables\nAdmin UI for inspecting original and translated blocks with inline editing and approval.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 24,
+    "title": "[TASK-02.1.4] [Web] Build Admin Book Manager & Side-by-Side Translation Review in React.js",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/24"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Authentication, Authorization & Security Governance\n- **Feature**: Client-Side Content Protection & DRM Safeguards\n- **Estimate**: 3h\n- **Dependencies**: None\n\n### User Story Context\n> As a Content Owner, I want to disable screen recording on Android and restrict copying on Web so that proprietary educational material is protected from unauthorized duplication\n\n### Acceptance Criteria\n- [ ] React Native Android application sets FLAG_SECURE on reader and exam activities\n- [ ] React.js Web client disables right-click, selection, and printing on study pages\n- [ ] Dynamic user watermark overlaid on reading and test interfaces\n\n---\n\n### Task Description & Deliverables\nRender randomized subtle watermark with student email and timestamp over content panes.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 20,
+    "title": "[TASK-01.4.3] [Web] Build floating student watermark overlay component",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/20"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Authentication, Authorization & Security Governance\n- **Feature**: Client-Side Content Protection & DRM Safeguards\n- **Estimate**: 3h\n- **Dependencies**: None\n\n### User Story Context\n> As a Content Owner, I want to disable screen recording on Android and restrict copying on Web so that proprietary educational material is protected from unauthorized duplication\n\n### Acceptance Criteria\n- [ ] React Native Android application sets FLAG_SECURE on reader and exam activities\n- [ ] React.js Web client disables right-click, selection, and printing on study pages\n- [ ] Dynamic user watermark overlaid on reading and test interfaces\n\n---\n\n### Task Description & Deliverables\nDisable context menu, text selection CSS, and print screen shortcuts on content viewer views.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 19,
+    "title": "[TASK-01.4.2] [Web] Implement Web anti-copy protection layer in React.js",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/19"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Authentication, Authorization & Security Governance\n- **Feature**: Single Active Session Enforcement\n- **Estimate**: 4h\n- **Dependencies**: TASK-01.3.2\n\n### User Story Context\n> As a System Administrator, I want to limit each student account to one active session with immediate eviction so that account sharing is strictly prevented and the evicted user is notified immediately\n\n### Acceptance Criteria\n- [ ] When Device B logs in, Device A's session is immediately invalidated in MongoDB user_sessions\n- [ ] Socket.io pushes termination event to Device A\n- [ ] Device A immediately displays modal message: 'Your session has been terminated due to login from another device' and redirects to login\n\n---\n\n### Task Description & Deliverables\nDisplay exact termination message modal and clear local auth state immediately.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 16,
+    "title": "[TASK-01.3.3] [Web] Implement termination listener in React.js and React Native to show dialog and clear tokens",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/16"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Authentication, Authorization & Security Governance\n- **Feature**: Role-Based Access Control (RBAC)\n- **Estimate**: 3h\n- **Dependencies**: TASK-01.2.1\n\n### User Story Context\n> As a Administrator, I want to enforce strict role boundaries between Students, Mentors, and Admins in Express.js so that users cannot perform unauthorized actions\n\n### Acceptance Criteria\n- [ ] Strict 1:1 role assignment (STUDENT, MENTOR, ADMIN)\n- [ ] Express.js middleware verifying role claims on protected endpoints\n- [ ] Client-side navigation guards in React.js and React Native\n\n---\n\n### Task Description & Deliverables\nClient navigation guards redirecting unauthenticated or unauthorized users.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 13,
+    "title": "[TASK-01.2.2] [Web] Implement React.js route guards and React Native navigation role protection",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/13"
+  },
+  {
+    "body": "### Module & Feature\n- **Module**: Authentication, Authorization & Security Governance\n- **Feature**: Email OTP Authentication (Google SMTP)\n- **Estimate**: 4h\n- **Dependencies**: TASK-01.1.3\n\n### User Story Context\n> As a Student/Admin/Mentor, I want to securely log in using a 6-digit OTP sent to my email via Google SMTP so that I can access my workspace without remembering passwords\n\n### Acceptance Criteria\n- [ ] Email OTP generation (6 digits, 10-minute expiry)\n- [ ] Google SMTP integration via Nodemailer for reliable OTP delivery\n- [ ] JWT token generation with short-lived access tokens (15m) and secure refresh tokens (7d)\n- [ ] Rate limiting on OTP dispatch (max 3 OTP requests per 15 minutes per email/IP)\n\n---\n\n### Task Description & Deliverables\nBuild modern React.js OTP login form with countdown timer, resend button, and Tailwind CSS v4 styling.\n\n- [ ] Implementation complete\n- [ ] Automated tests written and passing\n- [ ] Code reviewed and merged",
+    "labels": [
+      {
+        "id": "LA_kwDOUILFtc8AAAACy31mtQ",
+        "name": "Web",
+        "description": "React.js Web application and Admin portal UI",
+        "color": "5319E7"
+      }
+    ],
+    "number": 9,
+    "title": "[TASK-01.1.4] [Web] Build responsive Web Login & OTP verification screen in React.js + Tailwind CSS v4",
+    "url": "https://github.com/PRATIK-RAKTATE/appsc-api/issues/9"
+  }
+]
